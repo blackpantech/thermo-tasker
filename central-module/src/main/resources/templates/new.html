@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org/">
+<head>
+    <meta charset="UTF-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Thermo Tasker - Create a new task</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+</head>
+<body>
+<div class="container">
+    <h1>Create a new task</h1>
+    <form action="#" method="POST" th:action="@{/tasks}" th:object="${newTask}">
+        <div class="form-group">
+            <label for="topic">Topic</label>
+            <input id="topic" placeholder="Topic" required th:field="*{topic}" type="text"/>
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <input id="description" placeholder="Description" required th:field="*{description}" type="text"/>
+        </div>
+        <button type="submit">Create task</button>
+    </form>
+    <p style="text-align: center; margin-top: 20px;">
+        <a class="cancelLink" th:href="@{/}">Cancel and return to list</a>
+    </p>
+</div>
+</body>
+</html>
