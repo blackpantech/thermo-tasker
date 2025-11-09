@@ -3,7 +3,6 @@ package com.blackpantech.central_module.application;
 import com.blackpantech.central_module.domain.Task;
 import com.blackpantech.central_module.domain.ports.TaskMessageBroker;
 import com.blackpantech.central_module.domain.ports.TaskRepository;
-import java.util.ArrayList;
 import java.util.List;
 
 public class TaskService {
@@ -18,8 +17,11 @@ public class TaskService {
   }
 
   public List<Task> getTasks() {
-    return new ArrayList<>();
+    return taskRepository.getTasks();
   }
 
-  public void createTask(Task newTask) {}
+  public void createTask(Task newTask) {
+    taskMessageBroker.sendTask(newTask);
+    taskRepository.createTask(newTask);
+  }
 }
