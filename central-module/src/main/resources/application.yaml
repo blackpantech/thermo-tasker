@@ -14,6 +14,21 @@ spring:
     defer-datasource-initialization: true
     hibernate:
       ddl-auto: create-drop
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+message-broker:
+  dead-letter:
+    exchange:
+      name: dlx.exchange
+    queue:
+      name: dlq.queue
+      routing-key: dlq.routingKey
+  tasks-queue:
+    name: tasks.queue
 
 sql:
   init:
