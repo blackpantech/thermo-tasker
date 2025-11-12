@@ -1,5 +1,6 @@
 package com.blackpantech.central_module.infrastructure.repository;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.refEq;
 import static org.mockito.Mockito.verify;
@@ -49,7 +50,7 @@ public class JpaTaskRepositoryTest {
     final var task = new Task("Groceries", "Get milk", dueDate);
 
     // WHEN
-    jpaTaskRepository.createTask(task);
+    assertDoesNotThrow(() -> jpaTaskRepository.createTask(task));
 
     // THEN
     TaskEntity expectedTask =

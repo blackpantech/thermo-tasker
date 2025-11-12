@@ -2,6 +2,8 @@ package com.blackpantech.central_module.infrastructure.controller;
 
 import com.blackpantech.central_module.application.TaskService;
 import com.blackpantech.central_module.domain.Task;
+import com.blackpantech.central_module.domain.exceptions.TaskPersistenceException;
+import com.blackpantech.central_module.domain.exceptions.TaskQueueingException;
 import java.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +57,33 @@ public class CentralModuleController {
         "Creating new task with topic \"{}\" and description \"{}\".",
         newTaskForm.topic(),
         newTaskForm.description());
-    taskService.createTask(newTask);
+    try {
+      taskService.createTask(newTask);
+    } catch (TaskQueueingException e) {
+      logger.error(
+          "Could not queue task with topic \"{}\", description \"{}\" and due date {}.",
+          newTask.topic(),
+          newTask.description(),
+          newTask.dueDate());
+      model.addAttribute(
+          "errorMessage",
+          String.format(
+              "Could not queue task with topic \"%s\", description \"%s\" and due date %s.",
+              newTask.topic(), newTask.description(), newTask.dueDate()));
+      return "new";
+    } catch (TaskPersistenceException exception) {
+      logger.error(
+          "Could not persist task with topic \"{}\", description \"{}\" and due date {}.",
+          newTask.topic(),
+          newTask.description(),
+          newTask.dueDate());
+      model.addAttribute(
+          "errorMessage",
+          String.format(
+              "Could not persist task with topic \"%s\", description \"%s\" and due date %s.",
+              newTask.topic(), newTask.description(), newTask.dueDate()));
+      return "new";
+    }
     logger.debug("Redirecting to home page.");
     return "redirect:/";
   }

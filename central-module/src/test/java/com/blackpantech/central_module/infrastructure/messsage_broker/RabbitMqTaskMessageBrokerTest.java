@@ -1,5 +1,6 @@
 package com.blackpantech.central_module.infrastructure.messsage_broker;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
@@ -28,7 +29,7 @@ public class RabbitMqTaskMessageBrokerTest {
     final var task = new Task("Groceries", "Get milk", Instant.now());
 
     // WHEN
-    rabbitMqTaskMessageBroker.sendTask(task);
+    assertDoesNotThrow(() -> rabbitMqTaskMessageBroker.sendTask(task));
 
     // THEN
     verify(rabbitTemplate).getMessageConverter();
