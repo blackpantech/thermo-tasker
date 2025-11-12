@@ -1,6 +1,21 @@
 package com.blackpantech.central_module.infrastructure.controller;
 
+import com.blackpantech.central_module.application.TaskService;
+import com.blackpantech.central_module.domain.Task;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
+
+import java.time.Instant;
+import java.util.List;
+
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.ArgumentMatchers.refEq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -11,18 +26,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
-
-import com.blackpantech.central_module.application.TaskService;
-import com.blackpantech.central_module.domain.Task;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.List;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(CentralModuleController.class)
 @DisplayName("Central Module Controller")
@@ -54,7 +57,10 @@ public class CentralModuleControllerTest {
   @Test
   @DisplayName("Should get tasks page")
   void shouldGetTasks() throws Exception {
-    var tasks = List.of(new Task("Groceries", "Get milk"), new Task("Kitchen", "Wash the dishes"));
+    var tasks =
+        List.of(
+            new Task("Groceries", "Get milk", Instant.now()),
+            new Task("Kitchen", "Wash the dishes", Instant.now()));
     when(taskService.getTasks()).thenReturn(tasks);
     mockMvc
         .perform(get("/tasks").accept(MediaType.TEXT_HTML))
@@ -72,17 +78,18 @@ public class CentralModuleControllerTest {
   @Test
   @DisplayName("Should post new task")
   void shouldPostNewTask() throws Exception {
-    var newTask = new Task("Groceries", "Get milk");
+    var newTaskForm = new TaskForm("Groceries", "Get milk");
     mockMvc
         .perform(
             post("/tasks")
-                .flashAttr("newTask", newTask)
+                .flashAttr("newTaskForm", newTaskForm)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isFound())
         .andExpect(view().name("redirect:/"));
 
-    verify(taskService).createTask(newTask);
+    Task expectedTask = new Task(newTaskForm.topic(), newTaskForm.description(), null);
+    verify(taskService).createTask(refEq(expectedTask, "dueDate"));
     verifyNoMoreInteractions(taskService);
   }
 }

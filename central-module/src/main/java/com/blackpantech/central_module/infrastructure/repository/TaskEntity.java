@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.Instant;
 import java.util.UUID;
 
 @Entity
@@ -22,6 +23,9 @@ public class TaskEntity {
   @Column(name = "description", nullable = false)
   private String description;
 
+  @Column(name = "due_date", nullable = false)
+  private Instant dueDate;
+
   @Column(name = "task_status", nullable = false)
   private TaskStatus taskStatus;
 
@@ -29,18 +33,15 @@ public class TaskEntity {
     // No arg constructor
   }
 
-  public TaskEntity(String topic, String description, TaskStatus taskStatus) {
-    this.description = description;
-    this.taskStatus = taskStatus;
+  public TaskEntity(String topic, String description, Instant dueDate, TaskStatus taskStatus) {
     this.topic = topic;
+    this.description = description;
+    this.dueDate = dueDate;
+    this.taskStatus = taskStatus;
   }
 
   public UUID getId() {
     return id;
-  }
-
-  public void setId(UUID id) {
-    this.id = id;
   }
 
   public String getTopic() {
@@ -57,6 +58,14 @@ public class TaskEntity {
 
   public void setDescription(String description) {
     this.description = description;
+  }
+
+  public Instant getDueDate() {
+    return dueDate;
+  }
+
+  public void setDueDate(Instant dueDate) {
+    this.dueDate = dueDate;
   }
 
   public TaskStatus getTaskStatus() {

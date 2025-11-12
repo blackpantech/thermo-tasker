@@ -2,6 +2,7 @@ package com.blackpantech.central_module.infrastructure.controller;
 
 import com.blackpantech.central_module.application.TaskService;
 import com.blackpantech.central_module.domain.Task;
+import java.time.Instant;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,8 +24,8 @@ public class CentralModuleController {
 
   @GetMapping("/new")
   public String getNewTaskPage(Model model) {
-    Task newTask = new Task("", "");
-    model.addAttribute("newTask", newTask);
+    TaskForm newTaskForm = new TaskForm("", "");
+    model.addAttribute("newTaskForm", newTaskForm);
     return "new";
   }
 
@@ -35,7 +36,12 @@ public class CentralModuleController {
   }
 
   @PostMapping("/tasks")
-  public String postNewTask(@ModelAttribute("newTask") Task newTask) {
+  public String postNewTask(@ModelAttribute("newTaskForm") TaskForm newTaskForm, Model model) {
+    if (newTaskForm.topic().isBlank() || newTaskForm.description().isBlank()) {
+      model.addAttribute("errorMessage", "Task's topic and description cannot be empty.");
+      return "new";
+    }
+    var newTask = new Task(newTaskForm.topic(), newTaskForm.description(), Instant.now());
     taskService.createTask(newTask);
     return "redirect:/";
   }
