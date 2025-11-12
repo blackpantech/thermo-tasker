@@ -1,12 +1,15 @@
 package com.blackpantech.central_module.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import com.blackpantech.central_module.domain.Task;
+import com.blackpantech.central_module.domain.exceptions.TaskPersistenceException;
+import com.blackpantech.central_module.domain.exceptions.TaskQueueingException;
 import com.blackpantech.central_module.domain.ports.TaskMessageBroker;
 import com.blackpantech.central_module.domain.ports.TaskRepository;
 import java.time.Instant;
@@ -42,12 +45,12 @@ public class TaskServiceTest {
 
   @Test
   @DisplayName("Should create new task")
-  void shouldCreateTask() {
+  void shouldCreateTask() throws TaskQueueingException, TaskPersistenceException {
     // GIVEN
     var newTask = new Task("Groceries", "Get milk", Instant.now());
 
     // WHEN
-    taskService.createTask(newTask);
+    assertDoesNotThrow(() -> taskService.createTask(newTask));
 
     // THEN
     verify(taskMessageBroker).sendTask(newTask);
