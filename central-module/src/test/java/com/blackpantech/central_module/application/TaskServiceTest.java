@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import com.blackpantech.central_module.domain.Task;
 import com.blackpantech.central_module.domain.ports.TaskMessageBroker;
 import com.blackpantech.central_module.domain.ports.TaskRepository;
+import java.time.Instant;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,7 +21,9 @@ public class TaskServiceTest {
   @Mock private final TaskMessageBroker taskMessageBroker = mock(TaskMessageBroker.class);
   private final TaskService taskService = new TaskService(taskRepository, taskMessageBroker);
   private final List<Task> tasks =
-      List.of(new Task("Groceries", "Get milk"), new Task("Kitchen", "Wash the dishes"));
+      List.of(
+          new Task("Groceries", "Get milk", Instant.now()),
+          new Task("Kitchen", "Wash the dishes", Instant.now()));
 
   @Test
   @DisplayName("Should get tasks")
@@ -41,7 +44,7 @@ public class TaskServiceTest {
   @DisplayName("Should create new task")
   void shouldCreateTask() {
     // GIVEN
-    var newTask = new Task("Groceries", "Get milk");
+    var newTask = new Task("Groceries", "Get milk", Instant.now());
 
     // WHEN
     taskService.createTask(newTask);

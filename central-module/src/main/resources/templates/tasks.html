@@ -12,7 +12,11 @@
 
     <ul class="task-list">
         <li class="task-item" th:each="task : ${tasks}">
-            <div class="task-topic" th:text="${task.topic}">Task Topic</div>
+            <div class="task-header">
+                <span class="task-topic" th:text="${task.topic}">Task Topic</span>
+                <span class="task-date"
+                      th:text="${#temporals.format(task.dueDate, 'dd/MM/yyyy HH:mm')}">Task Date</span>
+            </div>
             <div class="task-description" th:text="${task.description}">Task Description</div>
         </li>
     </ul>

@@ -1,3 +1,5 @@
 package com.blackpantech.central_module.domain;
 
-public record Task(String topic, String description) {}
+import java.time.Instant;
+
+public record Task(String topic, String description, Instant dueDate) {}
