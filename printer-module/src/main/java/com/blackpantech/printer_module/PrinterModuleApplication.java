@@ -5,9 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class PrinterModuleApplication {
-
-	static void main(String[] args) {
-		SpringApplication.run(PrinterModuleApplication.class, args);
-	}
-
+  static void main(String[] args) {
+    SpringApplication.run(PrinterModuleApplication.class, args);
+  }
 }

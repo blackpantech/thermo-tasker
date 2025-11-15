@@ -1,3 +1,31 @@
 spring:
   application:
     name: printer-module
+  datasource:
+    url: jdbc:postgresql://localhost:5432/thermo-tasker
+    username: dev
+    password: dev
+    driverClassName: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    listener:
+      simple:
+        acknowledge-mode: manual
+        prefetch: 1
+
+message-broker:
+  dead-letter:
+    exchange:
+      name: dlx.exchange
+    queue:
+      name: dlq.queue
+      routing-key: dlq.routingKey
+  tasks-queue:
+    name: tasks.queue
