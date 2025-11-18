@@ -14,11 +14,14 @@ public class TaskService {
   }
 
   public boolean printTask(Task task) {
-    /*
-     * TODO:
-     * try to print
-     * update task in DB as SUCCESS or FAILED
-     */
-    return !task.topic().contains("test");
+    var printingResult = taskPrinter.printTask(task);
+
+    if (printingResult) {
+      taskRepository.markTaskAsSuccessfullyPrinted(task);
+    } else {
+      taskRepository.markTaskAsFailedToPrint(task);
+    }
+
+    return printingResult;
   }
 }

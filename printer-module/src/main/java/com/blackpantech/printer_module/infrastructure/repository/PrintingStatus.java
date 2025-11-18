@@ -1,4 +1,4 @@
-package com.blackpantech.central_module.infrastructure.repository;
+package com.blackpantech.printer_module.infrastructure.repository;
 
 public enum PrintingStatus {
   PENDING(0),

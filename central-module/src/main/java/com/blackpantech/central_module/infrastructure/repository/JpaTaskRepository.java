@@ -5,7 +5,6 @@ import com.blackpantech.central_module.domain.exceptions.TaskPersistenceExceptio
 import com.blackpantech.central_module.domain.ports.TaskRepository;
 import jakarta.persistence.PersistenceException;
 import java.util.List;
-import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

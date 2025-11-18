@@ -2,7 +2,6 @@ package com.blackpantech.central_module.infrastructure.controller;
 
 import com.blackpantech.central_module.application.TaskService;
 import com.blackpantech.central_module.domain.Task;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +30,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(CentralModuleController.class)
 @DisplayName("Central Module Controller")
 public class CentralModuleControllerTest {
-  @Autowired private ObjectMapper objectMapper;
   @Autowired private MockMvc mockMvc;
   @MockitoBean private TaskService taskService;
 
