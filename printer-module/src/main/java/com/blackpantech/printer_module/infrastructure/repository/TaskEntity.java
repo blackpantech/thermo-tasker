@@ -1,4 +1,4 @@
-package com.blackpantech.central_module.infrastructure.repository;
+package com.blackpantech.printer_module.infrastructure.repository;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

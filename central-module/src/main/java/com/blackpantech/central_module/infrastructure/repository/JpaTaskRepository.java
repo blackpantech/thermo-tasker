@@ -5,6 +5,7 @@ import com.blackpantech.central_module.domain.exceptions.TaskPersistenceExceptio
 import com.blackpantech.central_module.domain.ports.TaskRepository;
 import jakarta.persistence.PersistenceException;
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,23 +23,27 @@ public class JpaTaskRepository implements TaskRepository {
     var taskEntities = taskJpaRepository.findAll();
     logger.debug("Mapping all current tasks entities to task domain objects.");
     return taskEntities.stream()
-        .map(
-            taskEntity ->
-                new Task(
-                    taskEntity.getTopic(), taskEntity.getDescription(), taskEntity.getDueDate()))
+        .map(taskEntity -> new Task(taskEntity.getId(),
+                                    taskEntity.getTopic(),
+                                    taskEntity.getDescription(),
+                                    taskEntity.getDueDate())
+        )
         .toList();
   }
 
   @Override
   public void createTask(Task newTask) throws TaskPersistenceException {
     logger.debug(
-        "Persisting new task with topic \"{}\", description \"{}\" and due date \"{}\" to queue.",
+        "Persisting new task {} with topic \"{}\", description \"{}\" and due date \"{}\" to queue.",
+        newTask.id(),
         newTask.topic(),
         newTask.description(),
         newTask.dueDate());
-    var newTaskEntity =
-        new TaskEntity(
-            newTask.topic(), newTask.description(), newTask.dueDate(), TaskStatus.PENDING);
+    var newTaskEntity = new TaskEntity(newTask.id(),
+                                        newTask.topic(),
+                                        newTask.description(),
+                                        newTask.dueDate(),
+                                        PrintingStatus.PENDING);
     try {
       taskJpaRepository.save(newTaskEntity);
     } catch (PersistenceException exception) {

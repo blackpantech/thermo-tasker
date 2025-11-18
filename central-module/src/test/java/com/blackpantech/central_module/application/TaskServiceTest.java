@@ -14,6 +14,8 @@ import com.blackpantech.central_module.domain.ports.TaskMessageBroker;
 import com.blackpantech.central_module.domain.ports.TaskRepository;
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -25,8 +27,8 @@ public class TaskServiceTest {
   private final TaskService taskService = new TaskService(taskRepository, taskMessageBroker);
   private final List<Task> tasks =
       List.of(
-          new Task("Groceries", "Get milk", Instant.now()),
-          new Task("Kitchen", "Wash the dishes", Instant.now()));
+          new Task(UUID.randomUUID(), "Groceries", "Get milk", Instant.now()),
+          new Task(UUID.randomUUID(), "Kitchen", "Wash the dishes", Instant.now()));
 
   @Test
   @DisplayName("Should get tasks")
@@ -47,7 +49,7 @@ public class TaskServiceTest {
   @DisplayName("Should create new task")
   void shouldCreateTask() throws TaskQueueingException, TaskPersistenceException {
     // GIVEN
-    var newTask = new Task("Groceries", "Get milk", Instant.now());
+    var newTask = new Task(UUID.randomUUID(), "Groceries", "Get milk", Instant.now());
 
     // WHEN
     assertDoesNotThrow(() -> taskService.createTask(newTask));

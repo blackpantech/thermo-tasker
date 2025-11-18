@@ -2,7 +2,6 @@ package com.blackpantech.central_module.infrastructure.repository;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.refEq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -10,6 +9,8 @@ import static org.mockito.Mockito.when;
 import com.blackpantech.central_module.domain.Task;
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +31,9 @@ public class JpaTaskRepositoryTest {
     // GIVEN
     final List<TaskEntity> tasks =
         List.of(
-            new TaskEntity("Groceries", "Get milk", Instant.now(), TaskStatus.PENDING),
-            new TaskEntity("Admin", "Get the mail", Instant.now(), TaskStatus.SUCCESS),
-            new TaskEntity("Kitchen", "Wash the dishes", Instant.now(), TaskStatus.FAILED));
+            new TaskEntity(UUID.randomUUID(), "Groceries", "Get milk", Instant.now(), PrintingStatus.PENDING),
+            new TaskEntity(UUID.randomUUID(), "Admin", "Get the mail", Instant.now(), PrintingStatus.SUCCESS),
+            new TaskEntity(UUID.randomUUID(), "Kitchen", "Wash the dishes", Instant.now(), PrintingStatus.FAILED));
     when(taskJpaRepository.findAll()).thenReturn(tasks);
 
     // WHEN
@@ -49,15 +50,14 @@ public class JpaTaskRepositoryTest {
   void shouldCreateTask() {
     // GIVEN
     var dueDate = Instant.now();
-    final var task = new Task("Groceries", "Get milk", dueDate);
+    final var task = new Task(UUID.randomUUID(), "Groceries", "Get milk", dueDate);
 
     // WHEN
     assertDoesNotThrow(() -> jpaTaskRepository.createTask(task));
 
     // THEN
-    TaskEntity expectedTask =
-        new TaskEntity(task.topic(), task.description(), task.dueDate(), TaskStatus.PENDING);
-    verify(taskJpaRepository).save(refEq(expectedTask, "id"));
+    TaskEntity expectedTask = new TaskEntity(task.id(), task.topic(), task.description(), task.dueDate(), PrintingStatus.PENDING);
+    verify(taskJpaRepository).save(expectedTask);
     verifyNoMoreInteractions(taskJpaRepository);
   }
 }

@@ -27,20 +27,23 @@ public class RabbitMqTaskMessageBroker {
     try {
       Task task = objectMapper.readValue(taskString, Task.class);
       logger.debug(
-          "Received task with topic \"{}\", description \"{}\" and due date \"{}\" from queue.",
+          "Received task {} with topic \"{}\", description \"{}\" and due date \"{}\" from queue.",
+          task.id(),
           task.topic(),
           task.description(),
           task.dueDate());
       if (taskService.printTask(task)) {
         logger.debug(
-          "Sending acknowledgment for task with topic \"{}\", description \"{}\" and due date \"{}\".",
+          "Sending acknowledgment for task {} with topic \"{}\", description \"{}\" and due date \"{}\".",
+          task.id(),
           task.topic(),
           task.description(),
           task.dueDate());
         channel.basicAck(tag, false);
       } else {
         logger.debug(
-          "Sending negative acknowledgment for task with topic \"{}\", description \"{}\" and due date \"{}\".",
+          "Sending negative acknowledgment for task {} with topic \"{}\", description \"{}\" and due date \"{}\".",
+          task.id(),
           task.topic(),
           task.description(),
           task.dueDate());
