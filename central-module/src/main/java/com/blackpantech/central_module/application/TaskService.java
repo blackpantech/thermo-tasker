@@ -27,13 +27,15 @@ public class TaskService {
 
   public void createTask(Task newTask) throws TaskPersistenceException, TaskQueueingException {
     logger.debug(
-        "Sending new task with topic \"{}\", description \"{}\" and due date \"{}\" to queue.",
+        "Sending new task {} with topic \"{}\", description \"{}\" and due date \"{}\" to queue.",
+        newTask.id(),
         newTask.topic(),
         newTask.description(),
         newTask.dueDate());
     taskMessageBroker.sendTask(newTask);
     logger.debug(
-        "Persisting new task with topic \"{}\", description \"{}\" and due date \"{}\" to queue.",
+        "Persisting new task {} with topic \"{}\", description \"{}\" and due date \"{}\" to queue.",
+        newTask.id(),
         newTask.topic(),
         newTask.description(),
         newTask.dueDate());

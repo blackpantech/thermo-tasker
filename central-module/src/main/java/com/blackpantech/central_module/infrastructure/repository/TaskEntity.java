@@ -2,8 +2,6 @@ package com.blackpantech.central_module.infrastructure.repository;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.Instant;
@@ -13,7 +11,6 @@ import java.util.UUID;
 @Table(name = "tasks")
 public class TaskEntity {
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
   @Column(name = "id", nullable = false)
   private UUID id;
 
@@ -26,18 +23,20 @@ public class TaskEntity {
   @Column(name = "due_date", nullable = false)
   private Instant dueDate;
 
-  @Column(name = "task_status", nullable = false)
-  private TaskStatus taskStatus;
+  @Column(name = "printing_status", nullable = false)
+  private PrintingStatus printingStatus;
 
+  @SuppressWarnings("unused")
   private TaskEntity() {
     // No arg constructor
   }
 
-  public TaskEntity(String topic, String description, Instant dueDate, TaskStatus taskStatus) {
+  public TaskEntity(UUID id, String topic, String description, Instant dueDate, PrintingStatus printingStatus) {
+    this.id = id;
     this.topic = topic;
     this.description = description;
     this.dueDate = dueDate;
-    this.taskStatus = taskStatus;
+    this.printingStatus = printingStatus;
   }
 
   public UUID getId() {
@@ -68,11 +67,25 @@ public class TaskEntity {
     this.dueDate = dueDate;
   }
 
-  public TaskStatus getTaskStatus() {
-    return taskStatus;
+  public PrintingStatus getPrintingStatus() {
+    return printingStatus;
   }
 
-  public void setTaskStatus(TaskStatus taskStatus) {
-    this.taskStatus = taskStatus;
+  public void setPrintingStatus(PrintingStatus printingStatus) {
+    this.printingStatus = printingStatus;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    TaskEntity that = (TaskEntity) o;
+
+    return id.equals(that.id)
+            && topic.equals(that.topic)
+            && description.equals(that.description)
+            && dueDate.equals(that.dueDate)
+            && printingStatus == that.printingStatus;
   }
 }

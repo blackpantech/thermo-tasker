@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.refEq;
@@ -59,8 +60,8 @@ public class CentralModuleControllerTest {
   void shouldGetTasks() throws Exception {
     var tasks =
         List.of(
-            new Task("Groceries", "Get milk", Instant.now()),
-            new Task("Kitchen", "Wash the dishes", Instant.now()));
+            new Task(UUID.randomUUID(), "Groceries", "Get milk", Instant.now()),
+            new Task(UUID.randomUUID(), "Kitchen", "Wash the dishes", Instant.now()));
     when(taskService.getTasks()).thenReturn(tasks);
     mockMvc
         .perform(get("/tasks").accept(MediaType.TEXT_HTML))
@@ -88,8 +89,8 @@ public class CentralModuleControllerTest {
         .andExpect(status().isFound())
         .andExpect(view().name("redirect:/"));
 
-    Task expectedTask = new Task(newTaskForm.topic(), newTaskForm.description(), null);
-    verify(taskService).createTask(refEq(expectedTask, "dueDate"));
+    Task expectedTask = new Task(null, newTaskForm.topic(), newTaskForm.description(), null);
+    verify(taskService).createTask(refEq(expectedTask, "id", "dueDate"));
     verifyNoMoreInteractions(taskService);
   }
 }
