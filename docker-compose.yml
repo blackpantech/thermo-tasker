@@ -74,6 +74,8 @@ services:
     container_name: thermo-tasker-printer
     ports:
       - "8081:8080"
+    devices:
+      - /dev/usb/lp3:/dev/usb/lp3
     depends_on:
       postgres:
         condition: service_healthy

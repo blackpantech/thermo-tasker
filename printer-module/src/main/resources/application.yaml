@@ -29,3 +29,6 @@ message-broker:
       routing-key: dlq.routingKey
   tasks-queue:
     name: tasks.queue
+
+printer:
+  path: /dev/usb/lp3

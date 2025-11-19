@@ -10,3 +10,6 @@ spring:
     hibernate:
       ddl-auto: create-drop
     show-sql: true
+
+printer:
+  path: target/test-classes/mockUsb/lp3
