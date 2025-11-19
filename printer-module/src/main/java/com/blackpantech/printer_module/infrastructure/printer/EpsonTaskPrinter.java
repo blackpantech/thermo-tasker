@@ -62,14 +62,4 @@ public class EpsonTaskPrinter implements TaskPrinter {
       return false;
     }
   }
-
-  @Override
-  public boolean isPrinterConnectionOk() {
-    try (OutputStream _ = outputStreamFactory.createOutputStream()) {
-      return true;
-    } catch (Exception e) {
-      logger.error("Printer connection check failed: {}", e.getMessage());
-      return false;
-    }
-  }
 }
