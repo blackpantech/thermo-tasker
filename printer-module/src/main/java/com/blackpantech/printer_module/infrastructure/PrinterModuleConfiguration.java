@@ -11,6 +11,8 @@ import com.blackpantech.printer_module.domain.ports.TaskPrinter;
 import com.blackpantech.printer_module.domain.ports.TaskRepository;
 import com.blackpantech.printer_module.infrastructure.message_broker.RabbitMqTaskMessageBroker;
 import com.blackpantech.printer_module.infrastructure.printer.EpsonTaskPrinter;
+import com.blackpantech.printer_module.infrastructure.printer.FileOutputStreamFactory;
+import com.blackpantech.printer_module.infrastructure.printer.OutputStreamFactory;
 import com.blackpantech.printer_module.infrastructure.repository.JpaTaskRepository;
 import com.blackpantech.printer_module.infrastructure.repository.TaskJpaRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,13 +34,13 @@ public class PrinterModuleConfiguration {
   }
 
   @Bean
-  public TaskPrinter taskPrinter() throws IOException {
-    var epsonTaskPrinter = new EpsonTaskPrinter(printerPath);
-    if (epsonTaskPrinter.isPrinterConnectionOk()) {
-      return epsonTaskPrinter;
-    } else {
-      throw new IOException("Unable to connect to printer at path: " + printerPath);
-    }
+  public TaskPrinter taskPrinter(OutputStreamFactory outputStreamFactory) throws IOException {
+    return new EpsonTaskPrinter(outputStreamFactory);
+  }
+
+  @Bean
+  public OutputStreamFactory outputStreamFactory() {
+    return new FileOutputStreamFactory(printerPath);
   }
 
   @Bean

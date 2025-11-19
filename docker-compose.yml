@@ -74,6 +74,7 @@ services:
     container_name: thermo-tasker-printer
     ports:
       - "8081:8080"
+    user: "1000:7"
     devices:
       - /dev/usb/lp3:/dev/usb/lp3
     depends_on:
