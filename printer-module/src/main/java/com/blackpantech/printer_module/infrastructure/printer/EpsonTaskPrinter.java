@@ -1,8 +1,5 @@
 package com.blackpantech.printer_module.infrastructure.printer;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
@@ -14,11 +11,12 @@ import com.blackpantech.printer_module.domain.ports.TaskPrinter;
 
 public class EpsonTaskPrinter implements TaskPrinter {
 
-  private final String printerPath;
-  private final Logger logger = LoggerFactory.getLogger(TaskPrinter.class);
+  private final OutputStreamFactory outputStreamFactory;
+  private final Logger logger = LoggerFactory.getLogger(EpsonTaskPrinter.class);
+  private final Object writeLock = new Object();
 
-  public EpsonTaskPrinter(String printerPath) {
-      this.printerPath = printerPath;
+  public EpsonTaskPrinter(OutputStreamFactory outputStreamFactory) {
+    this.outputStreamFactory = outputStreamFactory;
   }
 
   @Override
@@ -28,7 +26,8 @@ public class EpsonTaskPrinter implements TaskPrinter {
                 task.topic(),
                 task.description(),
                 task.dueDate());
-    try (OutputStream out = getOutputStream()) {
+    try (OutputStream out = outputStreamFactory.createOutputStream()) {
+      synchronized (writeLock) {
         // Initialize printer
         out.write(EscPosByteConstants.INIT);
         // Print header (centered and bold)
@@ -51,36 +50,26 @@ public class EpsonTaskPrinter implements TaskPrinter {
         // Cut paper
         out.write(EscPosByteConstants.CUT_PAPER);
         out.flush();
-
-        return true;
+      }
+      return true;
     } catch (Exception e) {
       logger.error("Error while printing task {} with topic \"{}\", description \"{}\" and due date \"{}\".",
                   task.id(),
                   task.topic(),
                   task.description(),
-                  task.dueDate());
-      logger.error("Exception message: {}", e.getMessage());
+                  task.dueDate(),
+                  e);
       return false;
     }
   }
 
-  private OutputStream getOutputStream() throws IOException {
-    File printerFile = new File(printerPath);
-
-    if (!printerFile.exists()) {
-      throw new IOException("Printer device not found at: " + printerPath);
-    }
-
-    if (!printerFile.canWrite()) {
-      throw new IOException("Printer device can not be written to. Check permissions for: " + printerPath);
-    }
-
-    return new FileOutputStream(printerFile);
-  }
-
   @Override
   public boolean isPrinterConnectionOk() {
-    File printerFile = new File(printerPath);
-    return printerFile.exists() && printerFile.canWrite();
+    try (OutputStream _ = outputStreamFactory.createOutputStream()) {
+      return true;
+    } catch (Exception e) {
+      logger.error("Printer connection check failed: {}", e.getMessage());
+      return false;
+    }
   }
 }
