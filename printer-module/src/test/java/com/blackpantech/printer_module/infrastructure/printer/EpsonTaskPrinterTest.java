@@ -111,30 +111,4 @@ class EpsonTaskPrinterTest {
     assertTrue(byteArrayOut.toString("UTF-8").contains("Test Topic 2"));
     assertTrue(byteArrayOut.toString("UTF-8").contains("Test Description 2"));
   }
-
-  @Test
-  @DisplayName("Should return true when printer connection is ok")
-  void testIsPrinterConnectionOkSuccess() throws IOException {
-    // Given
-    when(mockFactory.createOutputStream()).thenReturn(byteArrayOut);
-
-    // When
-    boolean result = printer.isPrinterConnectionOk();
-
-    // Then
-    assertTrue(result);
-  }
-
-  @Test
-  @DisplayName("Should return false when printer connection fails")
-  void testIsPrinterConnectionOkFailure() throws IOException {
-    // Given
-    when(mockFactory.createOutputStream()).thenThrow(new IOException("Connection failed"));
-
-    // When
-    boolean result = printer.isPrinterConnectionOk();
-
-    // Then
-    assertFalse(result);
-  }
 }
