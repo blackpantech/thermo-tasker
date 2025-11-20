@@ -3,16 +3,18 @@ services:
   postgres:
     image: postgres:16-alpine
     container_name: thermo-tasker-postgres
+    restart: unless-stopped
     environment:
-      POSTGRES_DB: thermo-tasker
-      POSTGRES_USER: dev
-      POSTGRES_PASSWORD: dev
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_HOSTNAME}:${POSTGRES_PORT}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ${CONFIG_FILES_PATH}/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U dev -d thermo-tasker"]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -23,18 +25,19 @@ services:
   rabbitmq:
     image: rabbitmq:4-management-alpine
     container_name: thermo-tasker-rabbitmq
+    restart: unless-stopped
     environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
     ports:
-      - "5672:5672"      # AMQP port
-      - "15672:15672"    # Management UI port
+      - "${RABBITMQ_HOST}:${RABBITMQ_PORT}:5672"
+      - "${RABBITMQ_MANAGEMENT_HOST}:${RABBITMQ_MANAGEMENT_PORT}:15672"
     volumes:
-      - ./init/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
-      - ./init/definitions.json:/etc/rabbitmq/definitions.json:ro
       - rabbitmq_data:/var/lib/rabbitmq
+      - ${CONFIG_FILES_PATH}/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+      - ${CONFIG_FILES_PATH}/definitions.json:/etc/rabbitmq/definitions.json:ro
     healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      test: [ "CMD", "rabbitmq-diagnostics", "-q", "ping" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -47,22 +50,23 @@ services:
       context: .
       dockerfile: central-module/Dockerfile
     container_name: thermo-tasker-central
+    restart: unless-stopped
     ports:
-      - "8080:8080"
+      - "${CENTRAL_MODULE_HOST}:${CENTRAL_MODULE_PORT}:8080"
     depends_on:
       postgres:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/thermo-tasker
-      SPRING_DATASOURCE_USERNAME: dev
-      SPRING_DATASOURCE_PASSWORD: dev
-      SPRING_RABBITMQ_HOST: rabbitmq
-      SPRING_RABBITMQ_PORT: 5672
-      SPRING_RABBITMQ_USERNAME: guest
-      SPRING_RABBITMQ_PASSWORD: guest
-      TZ: Europe/Paris
+      SPRING_DATASOURCE_URL: jdbc:postgresql://${SPRING_POSTGRES_HOSTNAME}:${SPRING_POSTGRES_PORT}/${POSTGRES_DB}
+      SPRING_DATASOURCE_USERNAME: ${CENTRAL_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${CENTRAL_DB_PASS}
+      SPRING_RABBITMQ_HOST: ${SPRING_RABBITMQ_HOST}
+      SPRING_RABBITMQ_PORT: ${SPRING_RABBITMQ_PORT}
+      SPRING_RABBITMQ_USERNAME: ${RABBITMQ_USER}
+      SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_PASS}
+      TZ: ${SERVER_TZ}
     networks:
       - thermo-tasker-network
 
@@ -72,25 +76,27 @@ services:
       context: .
       dockerfile: printer-module/Dockerfile
     container_name: thermo-tasker-printer
+    restart: unless-stopped
     ports:
-      - "8081:8080"
+      - "${PRINTER_MODULE_HOST}:${PRINTER_MODULE_PORT}:8080"
+    user: "${USER_GID}:7"
     devices:
-      - /dev/usb/lp3:/dev/usb/lp3
+      - ${PRINTER_DEVICE_PATH}:${PRINTER_DEVICE_PATH}
     depends_on:
       postgres:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/thermo-tasker
-      SPRING_DATASOURCE_USERNAME: dev
-      SPRING_DATASOURCE_PASSWORD: dev
-      SPRING_RABBITMQ_HOST: rabbitmq
-      SPRING_RABBITMQ_PORT: 5672
-      SPRING_RABBITMQ_USERNAME: guest
-      SPRING_RABBITMQ_PASSWORD: guest
+      SPRING_DATASOURCE_URL: jdbc:postgresql://${SPRING_POSTGRES_HOSTNAME}:${SPRING_POSTGRES_PORT}/${POSTGRES_DB}
+      SPRING_DATASOURCE_USERNAME: ${PRINTER_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${PRINTER_DB_PASS}
+      SPRING_RABBITMQ_HOST: ${SPRING_RABBITMQ_HOST}
+      SPRING_RABBITMQ_PORT: ${SPRING_RABBITMQ_PORT}
+      SPRING_RABBITMQ_USERNAME: ${RABBITMQ_USER}
+      SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_PASS}
       SERVER_PORT: 8080
-      TZ: Europe/Paris
+      TZ: ${SERVER_TZ}
     networks:
       - thermo-tasker-network
 
