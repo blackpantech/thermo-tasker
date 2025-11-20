@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -53,8 +54,8 @@ class EpsonTaskPrinterTest {
     verify(mockFactory).createOutputStream();
     // Verify bytes were written (should contain init + topic + description + separators)
     assertTrue(byteArrayOut.size() > 0);
-    assertTrue(byteArrayOut.toString("UTF-8").contains("Test Topic"));
-    assertTrue(byteArrayOut.toString("UTF-8").contains("Test Description"));
+    assertTrue(byteArrayOut.toString(StandardCharsets.US_ASCII).contains("Test Topic"));
+    assertTrue(byteArrayOut.toString(StandardCharsets.US_ASCII).contains("Test Description"));
   }
 
   @Test
@@ -106,9 +107,9 @@ class EpsonTaskPrinterTest {
     // Then — both prints succeed and output is written
     assertTrue(byteArrayOut.size() > 0);
     verify(mockFactory, times(2)).createOutputStream();
-    assertTrue(byteArrayOut.toString("UTF-8").contains("Test Topic 1"));
-    assertTrue(byteArrayOut.toString("UTF-8").contains("Test Description 1"));
-    assertTrue(byteArrayOut.toString("UTF-8").contains("Test Topic 2"));
-    assertTrue(byteArrayOut.toString("UTF-8").contains("Test Description 2"));
+    assertTrue(byteArrayOut.toString(StandardCharsets.US_ASCII).contains("Test Topic 1"));
+    assertTrue(byteArrayOut.toString(StandardCharsets.US_ASCII).contains("Test Description 1"));
+    assertTrue(byteArrayOut.toString(StandardCharsets.US_ASCII).contains("Test Topic 2"));
+    assertTrue(byteArrayOut.toString(StandardCharsets.US_ASCII).contains("Test Description 2"));
   }
 }
