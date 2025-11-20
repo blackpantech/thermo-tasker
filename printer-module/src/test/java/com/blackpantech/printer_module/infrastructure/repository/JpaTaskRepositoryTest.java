@@ -16,9 +16,11 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 @SpringBootTest
 @ActiveProfiles("test")
 public class JpaTaskRepositoryTest {
-  @MockitoBean TaskJpaRepository taskJpaRepository;
+  @MockitoBean
+  TaskJpaRepository taskJpaRepository;
 
-  @Autowired JpaTaskRepository jpaTaskRepository;
+  @Autowired
+  JpaTaskRepository jpaTaskRepository;
 
   @Test
   @DisplayName("Should mark task as successfully printed")

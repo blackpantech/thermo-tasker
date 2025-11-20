@@ -15,21 +15,22 @@ public class FileOutputStreamFactory implements OutputStreamFactory {
   private final String printerPath;
   private final Logger logger = LoggerFactory.getLogger(FileOutputStreamFactory.class);
 
-  public FileOutputStreamFactory(String printerPath) {
+  public FileOutputStreamFactory(final String printerPath) {
     this.printerPath = printerPath;
     validatePrinterPath();
   }
 
   @Override
   public OutputStream createOutputStream() throws IOException {
-    File printerFile = new File(printerPath);
+    final File printerFile = new File(printerPath);
 
     if (!printerFile.exists()) {
       throw new IOException("Printer device not found at: " + printerPath);
     }
 
     if (!printerFile.canWrite()) {
-      throw new IOException("Printer device can not be written to. Check permissions for: " + printerPath);
+      throw new IOException(
+          "Printer device can not be written to. Check permissions for: " + printerPath);
     }
 
     return new FileOutputStream(printerFile);
@@ -37,7 +38,7 @@ public class FileOutputStreamFactory implements OutputStreamFactory {
 
   private void validatePrinterPath() {
     try {
-      Path p = Path.of(printerPath);
+      final Path p = Path.of(printerPath);
       if (!Files.exists(p)) {
         logger.warn("Configured printer path does not exist: {}", printerPath);
       } else if (!Files.isWritable(p)) {
@@ -45,7 +46,7 @@ public class FileOutputStreamFactory implements OutputStreamFactory {
       } else if (Files.isRegularFile(p)) {
         logger.info("Configured printer path is a regular file (OK for tests): {}", printerPath);
       }
-    } catch (Exception ex) {
+    } catch (final Exception ex) {
       logger.debug("Failed to validate printer path {}: {}", printerPath, ex.toString());
     }
   }

@@ -1,29 +1,32 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <meta charset="UTF-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <meta charset="UTF-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Tasks List - Thermo Tasker</title>
-    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
 </head>
+
 <body>
-<div class="tasksContainer">
-    <h1>Tasks List</h1>
+    <div class="tasksContainer">
+        <h1>Tasks List</h1>
 
-    <ul class="task-list">
-        <li class="task-item" th:each="task : ${tasks}">
-            <div class="task-header">
-                <span class="task-topic" th:text="${task.topic}">Task Topic</span>
-                <span class="task-date"
-                      th:text="${#temporals.format(task.dueDate, 'dd/MM/yyyy HH:mm')}">Task Date</span>
-            </div>
-            <div class="task-description" th:text="${task.description}">Task Description</div>
-        </li>
-    </ul>
+        <ul class="task-list">
+            <li class="task-item" th:each="task : ${tasks}">
+                <div class="task-header">
+                    <span class="task-topic" th:text="${task.topic}">Task Topic</span>
+                    <span class="task-date" th:text="${#temporals.format(task.dueDate, 'dd/MM/yyyy HH:mm')}">Task
+                        Date</span>
+                </div>
+                <div class="task-description" th:text="${task.description}">Task Description</div>
+            </li>
+        </ul>
 
-    <div class="back-link">
-        <a class="homeButton" th:href="@{/}">Return to Home</a>
+        <div class="back-link">
+            <a class="homeButton" th:href="@{/}">Return to Home</a>
+        </div>
     </div>
-</div>
 </body>
+
 </html>

@@ -31,7 +31,8 @@ public class TaskEntity {
     // No arg constructor
   }
 
-  public TaskEntity(UUID id, String topic, String description, Instant dueDate, PrintingStatus printingStatus) {
+  public TaskEntity(final UUID id, final String topic, final String description,
+      final Instant dueDate, final PrintingStatus printingStatus) {
     this.id = id;
     this.topic = topic;
     this.description = description;
@@ -47,7 +48,7 @@ public class TaskEntity {
     return topic;
   }
 
-  public void setTopic(String topic) {
+  public void setTopic(final String topic) {
     this.topic = topic;
   }
 
@@ -55,7 +56,7 @@ public class TaskEntity {
     return description;
   }
 
-  public void setDescription(String description) {
+  public void setDescription(final String description) {
     this.description = description;
   }
 
@@ -63,7 +64,7 @@ public class TaskEntity {
     return dueDate;
   }
 
-  public void setDueDate(Instant dueDate) {
+  public void setDueDate(final Instant dueDate) {
     this.dueDate = dueDate;
   }
 
@@ -71,21 +72,20 @@ public class TaskEntity {
     return printingStatus;
   }
 
-  public void setPrintingStatus(PrintingStatus printingStatus) {
+  public void setPrintingStatus(final PrintingStatus printingStatus) {
     this.printingStatus = printingStatus;
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+  public boolean equals(final Object o) {
+    if (this == o)
+      return true;
+    if (o == null || getClass() != o.getClass())
+      return false;
 
-    TaskEntity that = (TaskEntity) o;
+    final TaskEntity that = (TaskEntity) o;
 
-    return id.equals(that.id)
-            && topic.equals(that.topic)
-            && description.equals(that.description)
-            && dueDate.equals(that.dueDate)
-            && printingStatus == that.printingStatus;
+    return id.equals(that.id) && topic.equals(that.topic) && description.equals(that.description)
+        && dueDate.equals(that.dueDate) && printingStatus == that.printingStatus;
   }
 }

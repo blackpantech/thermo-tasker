@@ -15,17 +15,15 @@ public class EpsonTaskPrinter implements TaskPrinter {
   private final Logger logger = LoggerFactory.getLogger(EpsonTaskPrinter.class);
   private final Object writeLock = new Object();
 
-  public EpsonTaskPrinter(OutputStreamFactory outputStreamFactory) {
+  public EpsonTaskPrinter(final OutputStreamFactory outputStreamFactory) {
     this.outputStreamFactory = outputStreamFactory;
   }
 
   @Override
-  public boolean printTask(Task task) {
-    logger.debug("Sending task {} with topic \"{}\", description \"{}\" and due date \"{}\" to be printed.",
-                task.id(),
-                task.topic(),
-                task.description(),
-                task.dueDate());
+  public boolean printTask(final Task task) {
+    logger.debug(
+        "Sending task {} with topic \"{}\", description \"{}\" and due date \"{}\" to be printed.",
+        task.id(), task.topic(), task.description(), task.dueDate());
     try (OutputStream out = outputStreamFactory.createOutputStream()) {
       synchronized (writeLock) {
         // Initialize printer
@@ -52,13 +50,10 @@ public class EpsonTaskPrinter implements TaskPrinter {
         out.flush();
       }
       return true;
-    } catch (Exception e) {
-      logger.error("Error while printing task {} with topic \"{}\", description \"{}\" and due date \"{}\".",
-                  task.id(),
-                  task.topic(),
-                  task.description(),
-                  task.dueDate(),
-                  e);
+    } catch (final Exception e) {
+      logger.error(
+          "Error while printing task {} with topic \"{}\", description \"{}\" and due date \"{}\".",
+          task.id(), task.topic(), task.description(), task.dueDate(), e);
       return false;
     }
   }

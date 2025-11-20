@@ -30,15 +30,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(CentralModuleController.class)
 @DisplayName("Central Module Controller")
 public class CentralModuleControllerTest {
-  @Autowired private MockMvc mockMvc;
-  @MockitoBean private TaskService taskService;
+  @Autowired
+  private MockMvc mockMvc;
+  @MockitoBean
+  private TaskService taskService;
 
   @Test
   @DisplayName("Should get home page")
   void shouldGetHomePage() throws Exception {
-    mockMvc
-        .perform(get("/").accept(MediaType.TEXT_HTML))
-        .andExpect(status().isOk())
+    mockMvc.perform(get("/").accept(MediaType.TEXT_HTML)).andExpect(status().isOk())
         .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
         .andExpect(view().name("index"));
   }
@@ -46,9 +46,7 @@ public class CentralModuleControllerTest {
   @Test
   @DisplayName("Should get new task page")
   void shouldGetNewTaskPage() throws Exception {
-    mockMvc
-        .perform(get("/new").accept(MediaType.TEXT_HTML))
-        .andExpect(status().isOk())
+    mockMvc.perform(get("/new").accept(MediaType.TEXT_HTML)).andExpect(status().isOk())
         .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
         .andExpect(view().name("new"));
   }
@@ -56,17 +54,12 @@ public class CentralModuleControllerTest {
   @Test
   @DisplayName("Should get tasks page")
   void shouldGetTasks() throws Exception {
-    var tasks =
-        List.of(
-            new Task(UUID.randomUUID(), "Groceries", "Get milk", Instant.now()),
-            new Task(UUID.randomUUID(), "Kitchen", "Wash the dishes", Instant.now()));
+    final var tasks = List.of(new Task(UUID.randomUUID(), "Groceries", "Get milk", Instant.now()),
+        new Task(UUID.randomUUID(), "Kitchen", "Wash the dishes", Instant.now()));
     when(taskService.getTasks()).thenReturn(tasks);
-    mockMvc
-        .perform(get("/tasks").accept(MediaType.TEXT_HTML))
-        .andExpect(status().isOk())
+    mockMvc.perform(get("/tasks").accept(MediaType.TEXT_HTML)).andExpect(status().isOk())
         .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
-        .andExpect(view().name("tasks"))
-        .andExpect(model().attributeExists("tasks"))
+        .andExpect(view().name("tasks")).andExpect(model().attributeExists("tasks"))
         .andExpect(model().attribute("tasks", equalTo(tasks)))
         .andExpect(xpath("/html/body/div/ul/li").nodeCount(2));
 
@@ -77,17 +70,13 @@ public class CentralModuleControllerTest {
   @Test
   @DisplayName("Should post new task")
   void shouldPostNewTask() throws Exception {
-    var newTaskForm = new TaskForm("Groceries", "Get milk");
+    final var newTaskForm = new TaskForm("Groceries", "Get milk");
     mockMvc
-        .perform(
-            post("/tasks")
-                .flashAttr("newTaskForm", newTaskForm)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-        .andExpect(status().isFound())
-        .andExpect(view().name("redirect:/"));
+        .perform(post("/tasks").flashAttr("newTaskForm", newTaskForm)
+            .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isFound()).andExpect(view().name("redirect:/"));
 
-    Task expectedTask = new Task(null, newTaskForm.topic(), newTaskForm.description(), null);
+    final Task expectedTask = new Task(null, newTaskForm.topic(), newTaskForm.description(), null);
     verify(taskService).createTask(refEq(expectedTask, "id", "dueDate"));
     verifyNoMoreInteractions(taskService);
   }

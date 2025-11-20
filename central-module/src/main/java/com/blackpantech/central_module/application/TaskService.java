@@ -14,8 +14,8 @@ public class TaskService {
   private final TaskMessageBroker taskMessageBroker;
   private final Logger logger = LoggerFactory.getLogger(TaskService.class);
 
-  public TaskService(
-      final TaskRepository taskRepository, final TaskMessageBroker taskMessageBroker) {
+  public TaskService(final TaskRepository taskRepository,
+      final TaskMessageBroker taskMessageBroker) {
     this.taskRepository = taskRepository;
     this.taskMessageBroker = taskMessageBroker;
   }
@@ -25,20 +25,15 @@ public class TaskService {
     return taskRepository.getTasks();
   }
 
-  public void createTask(Task newTask) throws TaskPersistenceException, TaskQueueingException {
+  public void createTask(final Task newTask)
+      throws TaskPersistenceException, TaskQueueingException {
     logger.debug(
         "Sending new task {} with topic \"{}\", description \"{}\" and due date \"{}\" to queue.",
-        newTask.id(),
-        newTask.topic(),
-        newTask.description(),
-        newTask.dueDate());
+        newTask.id(), newTask.topic(), newTask.description(), newTask.dueDate());
     taskMessageBroker.sendTask(newTask);
     logger.debug(
         "Persisting new task {} with topic \"{}\", description \"{}\" and due date \"{}\" to queue.",
-        newTask.id(),
-        newTask.topic(),
-        newTask.description(),
-        newTask.dueDate());
+        newTask.id(), newTask.topic(), newTask.description(), newTask.dueDate());
     taskRepository.createTask(newTask);
   }
 }

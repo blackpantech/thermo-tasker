@@ -22,12 +22,13 @@ import org.mockito.Mock;
 
 @DisplayName("Central Module Task Service")
 public class TaskServiceTest {
-  @Mock private final TaskRepository taskRepository = mock(TaskRepository.class);
-  @Mock private final TaskMessageBroker taskMessageBroker = mock(TaskMessageBroker.class);
+  @Mock
+  private final TaskRepository taskRepository = mock(TaskRepository.class);
+  @Mock
+  private final TaskMessageBroker taskMessageBroker = mock(TaskMessageBroker.class);
   private final TaskService taskService = new TaskService(taskRepository, taskMessageBroker);
   private final List<Task> tasks =
-      List.of(
-          new Task(UUID.randomUUID(), "Groceries", "Get milk", Instant.now()),
+      List.of(new Task(UUID.randomUUID(), "Groceries", "Get milk", Instant.now()),
           new Task(UUID.randomUUID(), "Kitchen", "Wash the dishes", Instant.now()));
 
   @Test
@@ -37,7 +38,7 @@ public class TaskServiceTest {
     when(taskRepository.getTasks()).thenReturn(tasks);
 
     // WHEN
-    var result = taskService.getTasks();
+    final var result = taskService.getTasks();
 
     // THEN
     assertThat(result).isEqualTo(tasks);
@@ -49,7 +50,7 @@ public class TaskServiceTest {
   @DisplayName("Should create new task")
   void shouldCreateTask() throws TaskQueueingException, TaskPersistenceException {
     // GIVEN
-    var newTask = new Task(UUID.randomUUID(), "Groceries", "Get milk", Instant.now());
+    final var newTask = new Task(UUID.randomUUID(), "Groceries", "Get milk", Instant.now());
 
     // WHEN
     assertDoesNotThrow(() -> taskService.createTask(newTask));

@@ -33,18 +33,19 @@ public class CentralModuleConfiguration {
   private String tasksQueueName;
 
   @Bean
-  public TaskRepository taskRepository(TaskJpaRepository taskJpaRepository) {
+  public TaskRepository taskRepository(final TaskJpaRepository taskJpaRepository) {
     return new JpaTaskRepository(taskJpaRepository);
   }
 
   @Bean
-  public TaskMessageBroker taskMessageBroker(Queue tasksQueue, RabbitTemplate rabbitTemplate) {
+  public TaskMessageBroker taskMessageBroker(final Queue tasksQueue,
+      final RabbitTemplate rabbitTemplate) {
     return new RabbitMqTaskMessageBroker(tasksQueue, rabbitTemplate);
   }
 
   @Bean
-  public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
-    RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
+  public RabbitTemplate rabbitTemplate(final ConnectionFactory connectionFactory) {
+    final RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
     rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
     return rabbitTemplate;
   }
@@ -60,21 +61,20 @@ public class CentralModuleConfiguration {
   }
 
   @Bean
-  public Binding deadLetterQueueBinding(DirectExchange deadLetterExchange, Queue deadLetterQueue) {
+  public Binding deadLetterQueueBinding(final DirectExchange deadLetterExchange,
+      final Queue deadLetterQueue) {
     return BindingBuilder.bind(deadLetterQueue).to(deadLetterExchange).with(deadLetterRoutingKey);
   }
 
   @Bean
   public Queue tasksQueue() {
-    return QueueBuilder.durable(tasksQueueName)
-        .deadLetterExchange(deadLetterExchangeName)
-        .deadLetterRoutingKey(deadLetterRoutingKey)
-        .build();
+    return QueueBuilder.durable(tasksQueueName).deadLetterExchange(deadLetterExchangeName)
+        .deadLetterRoutingKey(deadLetterRoutingKey).build();
   }
 
   @Bean
-  public TaskService taskService(
-      TaskRepository taskRepository, TaskMessageBroker taskMessageBroker) {
+  public TaskService taskService(final TaskRepository taskRepository,
+      final TaskMessageBroker taskMessageBroker) {
     return new TaskService(taskRepository, taskMessageBroker);
   }
 }

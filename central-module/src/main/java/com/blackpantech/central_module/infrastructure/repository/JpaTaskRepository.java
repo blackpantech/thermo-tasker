@@ -13,42 +13,31 @@ public class JpaTaskRepository implements TaskRepository {
   private final TaskJpaRepository taskJpaRepository;
   private final Logger logger = LoggerFactory.getLogger(JpaTaskRepository.class);
 
-  public JpaTaskRepository(TaskJpaRepository taskJpaRepository) {
+  public JpaTaskRepository(final TaskJpaRepository taskJpaRepository) {
     this.taskJpaRepository = taskJpaRepository;
   }
 
   @Override
   public List<Task> getTasks() {
     logger.debug("Getting all current tasks entities.");
-    var taskEntities = taskJpaRepository.findAll();
+    final var taskEntities = taskJpaRepository.findAll();
     logger.debug("Mapping all current tasks entities to task domain objects.");
-    return taskEntities.stream()
-        .map(taskEntity -> new Task(taskEntity.getId(),
-                                    taskEntity.getTopic(),
-                                    taskEntity.getDescription(),
-                                    taskEntity.getDueDate())
-        )
-        .toList();
+    return taskEntities.stream().map(taskEntity -> new Task(taskEntity.getId(),
+        taskEntity.getTopic(), taskEntity.getDescription(), taskEntity.getDueDate())).toList();
   }
 
   @Override
-  public void createTask(Task newTask) throws TaskPersistenceException {
+  public void createTask(final Task newTask) throws TaskPersistenceException {
     logger.debug(
         "Persisting new task {} with topic \"{}\", description \"{}\" and due date \"{}\" to queue.",
-        newTask.id(),
-        newTask.topic(),
-        newTask.description(),
-        newTask.dueDate());
-    var newTaskEntity = new TaskEntity(newTask.id(),
-                                        newTask.topic(),
-                                        newTask.description(),
-                                        newTask.dueDate(),
-                                        PrintingStatus.PENDING);
+        newTask.id(), newTask.topic(), newTask.description(), newTask.dueDate());
+    final var newTaskEntity = new TaskEntity(newTask.id(), newTask.topic(), newTask.description(),
+        newTask.dueDate(), PrintingStatus.PENDING);
     try {
       taskJpaRepository.save(newTaskEntity);
-    } catch (PersistenceException exception) {
-      logger.error(
-          "Failed to create task: {} - {}", newTask.topic(), newTask.description(), exception);
+    } catch (final PersistenceException exception) {
+      logger.error("Failed to create task: {} - {}", newTask.topic(), newTask.description(),
+          exception);
       throw new TaskPersistenceException(
           String.format("Failed to save task %s", exception.getMessage()));
     }
