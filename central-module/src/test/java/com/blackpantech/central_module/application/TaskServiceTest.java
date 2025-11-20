@@ -22,12 +22,13 @@ import org.mockito.Mock;
 
 @DisplayName("Central Module Task Service")
 public class TaskServiceTest {
-  @Mock private final TaskRepository taskRepository = mock(TaskRepository.class);
-  @Mock private final TaskMessageBroker taskMessageBroker = mock(TaskMessageBroker.class);
+  @Mock
+  private final TaskRepository taskRepository = mock(TaskRepository.class);
+  @Mock
+  private final TaskMessageBroker taskMessageBroker = mock(TaskMessageBroker.class);
   private final TaskService taskService = new TaskService(taskRepository, taskMessageBroker);
   private final List<Task> tasks =
-      List.of(
-          new Task(UUID.randomUUID(), "Groceries", "Get milk", Instant.now()),
+      List.of(new Task(UUID.randomUUID(), "Groceries", "Get milk", Instant.now()),
           new Task(UUID.randomUUID(), "Kitchen", "Wash the dishes", Instant.now()));
 
   @Test

@@ -23,18 +23,12 @@ public class RabbitMqTaskMessageBroker implements TaskMessageBroker {
   public void sendTask(Task newTask) throws TaskQueueingException {
     logger.debug(
         "Sending new task with topic \"{}\", description \"{}\" and due date \"{}\" to queue.",
-        newTask.topic(),
-        newTask.description(),
-        newTask.dueDate());
+        newTask.topic(), newTask.description(), newTask.dueDate());
     try {
       rabbitTemplate.convertAndSend(tasksQueue.getName(), newTask);
     } catch (AmqpException exception) {
-      logger.error(
-          "Failed to queue task: {} - {} - {}",
-          newTask.topic(),
-          newTask.description(),
-          newTask.dueDate(),
-          exception);
+      logger.error("Failed to queue task: {} - {} - {}", newTask.topic(), newTask.description(),
+          newTask.dueDate(), exception);
       throw new TaskQueueingException(
           String.format("Failed to queue task: %s", exception.getMessage()));
     }

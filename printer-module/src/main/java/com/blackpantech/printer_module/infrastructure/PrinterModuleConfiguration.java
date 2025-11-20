@@ -51,7 +51,8 @@ public class PrinterModuleConfiguration {
   }
 
   @Bean
-  public RabbitMqTaskMessageBroker rabbitMqTaskMessageBroker(TaskService taskService, ObjectMapper objectMapper) {
+  public RabbitMqTaskMessageBroker rabbitMqTaskMessageBroker(TaskService taskService,
+      ObjectMapper objectMapper) {
     return new RabbitMqTaskMessageBroker(taskService, objectMapper);
   }
 }

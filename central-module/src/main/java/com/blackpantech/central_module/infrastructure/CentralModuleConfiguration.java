@@ -66,15 +66,13 @@ public class CentralModuleConfiguration {
 
   @Bean
   public Queue tasksQueue() {
-    return QueueBuilder.durable(tasksQueueName)
-        .deadLetterExchange(deadLetterExchangeName)
-        .deadLetterRoutingKey(deadLetterRoutingKey)
-        .build();
+    return QueueBuilder.durable(tasksQueueName).deadLetterExchange(deadLetterExchangeName)
+        .deadLetterRoutingKey(deadLetterRoutingKey).build();
   }
 
   @Bean
-  public TaskService taskService(
-      TaskRepository taskRepository, TaskMessageBroker taskMessageBroker) {
+  public TaskService taskService(TaskRepository taskRepository,
+      TaskMessageBroker taskMessageBroker) {
     return new TaskService(taskRepository, taskMessageBroker);
   }
 }

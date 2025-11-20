@@ -17,5 +17,6 @@ public class EscPosByteConstants {
   public static final byte[] ALIGN_LEFT = {ESC, 'a', 0};
   public static final byte[] ALIGN_CENTER = {ESC, 'a', 1};
   public static final byte[] ALIGN_RIGHT = {ESC, 'a', 2};
-  public static final byte[] SEPARATOR = "------------------------------------------------".getBytes(StandardCharsets.UTF_8);
+  public static final byte[] SEPARATOR =
+      "------------------------------------------------".getBytes(StandardCharsets.UTF_8);
 }

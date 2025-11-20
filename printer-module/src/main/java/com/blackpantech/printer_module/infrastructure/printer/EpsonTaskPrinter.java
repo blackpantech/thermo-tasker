@@ -21,11 +21,9 @@ public class EpsonTaskPrinter implements TaskPrinter {
 
   @Override
   public boolean printTask(Task task) {
-    logger.debug("Sending task {} with topic \"{}\", description \"{}\" and due date \"{}\" to be printed.",
-                task.id(),
-                task.topic(),
-                task.description(),
-                task.dueDate());
+    logger.debug(
+        "Sending task {} with topic \"{}\", description \"{}\" and due date \"{}\" to be printed.",
+        task.id(), task.topic(), task.description(), task.dueDate());
     try (OutputStream out = outputStreamFactory.createOutputStream()) {
       synchronized (writeLock) {
         // Initialize printer
@@ -53,12 +51,9 @@ public class EpsonTaskPrinter implements TaskPrinter {
       }
       return true;
     } catch (Exception e) {
-      logger.error("Error while printing task {} with topic \"{}\", description \"{}\" and due date \"{}\".",
-                  task.id(),
-                  task.topic(),
-                  task.description(),
-                  task.dueDate(),
-                  e);
+      logger.error(
+          "Error while printing task {} with topic \"{}\", description \"{}\" and due date \"{}\".",
+          task.id(), task.topic(), task.description(), task.dueDate(), e);
       return false;
     }
   }

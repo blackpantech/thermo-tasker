@@ -18,29 +18,19 @@ public class TaskService {
   }
 
   public boolean printTask(Task task) {
-    logger.debug(
-          "Printing task {} with topic \"{}\", description \"{}\" and due date \"{}\".",
-          task.id(),
-          task.topic(),
-          task.description(),
-          task.dueDate());
+    logger.debug("Printing task {} with topic \"{}\", description \"{}\" and due date \"{}\".",
+        task.id(), task.topic(), task.description(), task.dueDate());
     var printingResult = taskPrinter.printTask(task);
 
     if (printingResult) {
       logger.debug(
           "Marking task {} with topic \"{}\", description \"{}\" and due date \"{}\" as successfully printed.",
-          task.id(),
-          task.topic(),
-          task.description(),
-          task.dueDate());
+          task.id(), task.topic(), task.description(), task.dueDate());
       taskRepository.markTaskAsSuccessfullyPrinted(task);
     } else {
       logger.debug(
           "Marking task {} with topic \"{}\", description \"{}\" and due date \"{}\" as failed to print.",
-          task.id(),
-          task.topic(),
-          task.description(),
-          task.dueDate());
+          task.id(), task.topic(), task.description(), task.dueDate());
       taskRepository.markTaskAsFailedToPrint(task);
     }
 

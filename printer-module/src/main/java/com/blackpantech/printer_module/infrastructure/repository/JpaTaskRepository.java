@@ -18,22 +18,16 @@ public class JpaTaskRepository implements TaskRepository {
   @Override
   public void markTaskAsSuccessfullyPrinted(Task task) {
     logger.debug(
-          "Updating task {} with topic \"{}\", description \"{}\" and due date \"{}\" as successfully printed.",
-          task.id(),
-          task.topic(),
-          task.description(),
-          task.dueDate());
+        "Updating task {} with topic \"{}\", description \"{}\" and due date \"{}\" as successfully printed.",
+        task.id(), task.topic(), task.description(), task.dueDate());
     taskJpaRepository.updatePrintingStatus(task.id(), PrintingStatus.SUCCESS);
   }
 
   @Override
   public void markTaskAsFailedToPrint(Task task) {
     logger.debug(
-          "Updating task {} with topic \"{}\", description \"{}\" and due date \"{}\" as failed to print.",
-          task.id(),
-          task.topic(),
-          task.description(),
-          task.dueDate());
+        "Updating task {} with topic \"{}\", description \"{}\" and due date \"{}\" as failed to print.",
+        task.id(), task.topic(), task.description(), task.dueDate());
     taskJpaRepository.updatePrintingStatus(task.id(), PrintingStatus.FAILED);
   }
 

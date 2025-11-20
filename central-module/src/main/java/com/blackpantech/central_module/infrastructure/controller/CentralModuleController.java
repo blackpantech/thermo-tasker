@@ -58,33 +58,24 @@ public class CentralModuleController {
       model.addAttribute("errorMessage", "Task's topic and description cannot be empty.");
       return NEW_VIEW;
     }
-    var newTask = new Task(UUID.randomUUID(), newTaskForm.topic(), newTaskForm.description(), Instant.now());
-    logger.debug(
-        "Creating new task with topic \"{}\" and description \"{}\".",
-        newTaskForm.topic(),
+    var newTask =
+        new Task(UUID.randomUUID(), newTaskForm.topic(), newTaskForm.description(), Instant.now());
+    logger.debug("Creating new task with topic \"{}\" and description \"{}\".", newTaskForm.topic(),
         newTaskForm.description());
     try {
       taskService.createTask(newTask);
     } catch (TaskQueueingException e) {
-      logger.error(
-          "Could not queue task with topic \"{}\", description \"{}\" and due date {}.",
-          newTask.topic(),
-          newTask.description(),
-          newTask.dueDate());
-      model.addAttribute(
-          "errorMessage",
+      logger.error("Could not queue task with topic \"{}\", description \"{}\" and due date {}.",
+          newTask.topic(), newTask.description(), newTask.dueDate());
+      model.addAttribute("errorMessage",
           String.format(
               "Could not queue task with topic \"%s\", description \"%s\" and due date %s.",
               newTask.topic(), newTask.description(), newTask.dueDate()));
       return NEW_VIEW;
     } catch (TaskPersistenceException exception) {
-      logger.error(
-          "Could not persist task with topic \"{}\", description \"{}\" and due date {}.",
-          newTask.topic(),
-          newTask.description(),
-          newTask.dueDate());
-      model.addAttribute(
-          "errorMessage",
+      logger.error("Could not persist task with topic \"{}\", description \"{}\" and due date {}.",
+          newTask.topic(), newTask.description(), newTask.dueDate());
+      model.addAttribute("errorMessage",
           String.format(
               "Could not persist task with topic \"%s\", description \"%s\" and due date %s.",
               newTask.topic(), newTask.description(), newTask.dueDate()));

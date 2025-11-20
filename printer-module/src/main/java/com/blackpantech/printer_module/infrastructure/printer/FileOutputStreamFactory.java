@@ -29,7 +29,8 @@ public class FileOutputStreamFactory implements OutputStreamFactory {
     }
 
     if (!printerFile.canWrite()) {
-      throw new IOException("Printer device can not be written to. Check permissions for: " + printerPath);
+      throw new IOException(
+          "Printer device can not be written to. Check permissions for: " + printerPath);
     }
 
     return new FileOutputStream(printerFile);

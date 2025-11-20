@@ -21,10 +21,13 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 @SpringBootTest
 @ActiveProfiles("test")
 public class RabbitMqTaskMessageBrokerTest {
-  @MockitoBean Queue tasksQueue;
-  @MockitoBean RabbitTemplate rabbitTemplate;
+  @MockitoBean
+  Queue tasksQueue;
+  @MockitoBean
+  RabbitTemplate rabbitTemplate;
 
-  @Autowired RabbitMqTaskMessageBroker rabbitMqTaskMessageBroker;
+  @Autowired
+  RabbitMqTaskMessageBroker rabbitMqTaskMessageBroker;
 
   @Test
   @DisplayName("Should send task")

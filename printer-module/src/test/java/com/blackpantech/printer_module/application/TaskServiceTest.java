@@ -19,8 +19,10 @@ import org.mockito.Mock;
 
 @DisplayName("Printer Module Task Service")
 public class TaskServiceTest {
-  @Mock private final TaskPrinter taskPrinter = mock(TaskPrinter.class);
-  @Mock private final TaskRepository taskRepository = mock(TaskRepository.class);
+  @Mock
+  private final TaskPrinter taskPrinter = mock(TaskPrinter.class);
+  @Mock
+  private final TaskRepository taskRepository = mock(TaskRepository.class);
   private final TaskService taskService = new TaskService(taskPrinter, taskRepository);
 
   @Test

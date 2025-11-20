@@ -21,19 +21,23 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 @SpringBootTest
 @ActiveProfiles("test")
 public class JpaTaskRepositoryTest {
-  @MockitoBean TaskJpaRepository taskJpaRepository;
+  @MockitoBean
+  TaskJpaRepository taskJpaRepository;
 
-  @Autowired JpaTaskRepository jpaTaskRepository;
+  @Autowired
+  JpaTaskRepository jpaTaskRepository;
 
   @Test
   @DisplayName("Should get tasks")
   void shouldGetTasks() {
     // GIVEN
-    final List<TaskEntity> tasks =
-        List.of(
-            new TaskEntity(UUID.randomUUID(), "Groceries", "Get milk", Instant.now(), PrintingStatus.PENDING),
-            new TaskEntity(UUID.randomUUID(), "Admin", "Get the mail", Instant.now(), PrintingStatus.SUCCESS),
-            new TaskEntity(UUID.randomUUID(), "Kitchen", "Wash the dishes", Instant.now(), PrintingStatus.FAILED));
+    final List<TaskEntity> tasks = List.of(
+        new TaskEntity(UUID.randomUUID(), "Groceries", "Get milk", Instant.now(),
+            PrintingStatus.PENDING),
+        new TaskEntity(UUID.randomUUID(), "Admin", "Get the mail", Instant.now(),
+            PrintingStatus.SUCCESS),
+        new TaskEntity(UUID.randomUUID(), "Kitchen", "Wash the dishes", Instant.now(),
+            PrintingStatus.FAILED));
     when(taskJpaRepository.findAll()).thenReturn(tasks);
 
     // WHEN
@@ -56,7 +60,8 @@ public class JpaTaskRepositoryTest {
     assertDoesNotThrow(() -> jpaTaskRepository.createTask(task));
 
     // THEN
-    TaskEntity expectedTask = new TaskEntity(task.id(), task.topic(), task.description(), task.dueDate(), PrintingStatus.PENDING);
+    TaskEntity expectedTask = new TaskEntity(task.id(), task.topic(), task.description(),
+        task.dueDate(), PrintingStatus.PENDING);
     verify(taskJpaRepository).save(expectedTask);
     verifyNoMoreInteractions(taskJpaRepository);
   }

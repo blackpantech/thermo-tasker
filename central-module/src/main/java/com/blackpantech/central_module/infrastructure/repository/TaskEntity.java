@@ -31,7 +31,8 @@ public class TaskEntity {
     // No arg constructor
   }
 
-  public TaskEntity(UUID id, String topic, String description, Instant dueDate, PrintingStatus printingStatus) {
+  public TaskEntity(UUID id, String topic, String description, Instant dueDate,
+      PrintingStatus printingStatus) {
     this.id = id;
     this.topic = topic;
     this.description = description;
@@ -77,15 +78,14 @@ public class TaskEntity {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o)
+      return true;
+    if (o == null || getClass() != o.getClass())
+      return false;
 
     TaskEntity that = (TaskEntity) o;
 
-    return id.equals(that.id)
-            && topic.equals(that.topic)
-            && description.equals(that.description)
-            && dueDate.equals(that.dueDate)
-            && printingStatus == that.printingStatus;
+    return id.equals(that.id) && topic.equals(that.topic) && description.equals(that.description)
+        && dueDate.equals(that.dueDate) && printingStatus == that.printingStatus;
   }
 }

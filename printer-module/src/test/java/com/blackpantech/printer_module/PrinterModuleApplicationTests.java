@@ -9,7 +9,6 @@ import org.springframework.test.context.ActiveProfiles;
 class PrinterModuleApplicationTests {
 
 	@Test
-	void contextLoads() {
-	}
+	void contextLoads() {}
 
 }
