@@ -5,7 +5,7 @@ import java.nio.charset.StandardCharsets;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.apache.commons.lang3.StringUtils;
 import com.blackpantech.printer_module.domain.Task;
 import com.blackpantech.printer_module.domain.ports.TaskPrinter;
 
@@ -31,14 +31,14 @@ public class EpsonTaskPrinter implements TaskPrinter {
         // Print header (centered and bold)
         out.write(EscPosByteConstants.ALIGN_CENTER);
         out.write(EscPosByteConstants.BOLD_ON);
-        out.write(task.topic().getBytes(StandardCharsets.UTF_8));
+        out.write(StringUtils.stripAccents(task.topic()).getBytes(StandardCharsets.US_ASCII));
         out.write(EscPosByteConstants.BOLD_OFF);
         out.write(EscPosByteConstants.LINE_FEED);
-        out.write(EscPosByteConstants.SEPARATOR);
         // Print content (left aligned)
         out.write(EscPosByteConstants.ALIGN_LEFT);
+        out.write(EscPosByteConstants.SEPARATOR);
         out.write(EscPosByteConstants.LINE_FEED);
-        out.write(task.description().getBytes(StandardCharsets.UTF_8));
+        out.write(StringUtils.stripAccents(task.description()).getBytes(StandardCharsets.US_ASCII));
         out.write(EscPosByteConstants.LINE_FEED);
         out.write(EscPosByteConstants.SEPARATOR);
         out.write(EscPosByteConstants.LINE_FEED);
