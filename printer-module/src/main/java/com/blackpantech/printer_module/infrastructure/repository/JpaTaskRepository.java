@@ -11,12 +11,12 @@ public class JpaTaskRepository implements TaskRepository {
   private final TaskJpaRepository taskJpaRepository;
   private final Logger logger = LoggerFactory.getLogger(JpaTaskRepository.class);
 
-  public JpaTaskRepository(TaskJpaRepository taskJpaRepository) {
+  public JpaTaskRepository(final TaskJpaRepository taskJpaRepository) {
     this.taskJpaRepository = taskJpaRepository;
   }
 
   @Override
-  public void markTaskAsSuccessfullyPrinted(Task task) {
+  public void markTaskAsSuccessfullyPrinted(final Task task) {
     logger.debug(
         "Updating task {} with topic \"{}\", description \"{}\" and due date \"{}\" as successfully printed.",
         task.id(), task.topic(), task.description(), task.dueDate());
@@ -24,7 +24,7 @@ public class JpaTaskRepository implements TaskRepository {
   }
 
   @Override
-  public void markTaskAsFailedToPrint(Task task) {
+  public void markTaskAsFailedToPrint(final Task task) {
     logger.debug(
         "Updating task {} with topic \"{}\", description \"{}\" and due date \"{}\" as failed to print.",
         task.id(), task.topic(), task.description(), task.dueDate());

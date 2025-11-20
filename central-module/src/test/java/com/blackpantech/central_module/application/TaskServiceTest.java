@@ -38,7 +38,7 @@ public class TaskServiceTest {
     when(taskRepository.getTasks()).thenReturn(tasks);
 
     // WHEN
-    var result = taskService.getTasks();
+    final var result = taskService.getTasks();
 
     // THEN
     assertThat(result).isEqualTo(tasks);
@@ -50,7 +50,7 @@ public class TaskServiceTest {
   @DisplayName("Should create new task")
   void shouldCreateTask() throws TaskQueueingException, TaskPersistenceException {
     // GIVEN
-    var newTask = new Task(UUID.randomUUID(), "Groceries", "Get milk", Instant.now());
+    final var newTask = new Task(UUID.randomUUID(), "Groceries", "Get milk", Instant.now());
 
     // WHEN
     assertDoesNotThrow(() -> taskService.createTask(newTask));

@@ -24,17 +24,18 @@ public class PrinterModuleConfiguration {
   private String printerPath;
 
   @Bean
-  public TaskService taskService(TaskPrinter taskPrinter, TaskRepository taskRepository) {
+  public TaskService taskService(final TaskPrinter taskPrinter,
+      final TaskRepository taskRepository) {
     return new TaskService(taskPrinter, taskRepository);
   }
 
   @Bean
-  public TaskRepository taskRepository(TaskJpaRepository taskJpaRepository) {
+  public TaskRepository taskRepository(final TaskJpaRepository taskJpaRepository) {
     return new JpaTaskRepository(taskJpaRepository);
   }
 
   @Bean
-  public TaskPrinter taskPrinter(OutputStreamFactory outputStreamFactory) throws IOException {
+  public TaskPrinter taskPrinter(final OutputStreamFactory outputStreamFactory) throws IOException {
     return new EpsonTaskPrinter(outputStreamFactory);
   }
 
@@ -45,14 +46,14 @@ public class PrinterModuleConfiguration {
 
   @Bean
   public ObjectMapper objectMapper() {
-    var objectMapper = new ObjectMapper();
+    final var objectMapper = new ObjectMapper();
     objectMapper.registerModule(new JavaTimeModule());
     return objectMapper;
   }
 
   @Bean
-  public RabbitMqTaskMessageBroker rabbitMqTaskMessageBroker(TaskService taskService,
-      ObjectMapper objectMapper) {
+  public RabbitMqTaskMessageBroker rabbitMqTaskMessageBroker(final TaskService taskService,
+      final ObjectMapper objectMapper) {
     return new RabbitMqTaskMessageBroker(taskService, objectMapper);
   }
 }

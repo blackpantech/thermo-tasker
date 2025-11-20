@@ -17,16 +17,16 @@ public class RabbitMqTaskMessageBroker {
   private final ObjectMapper objectMapper;
   private final Logger logger = LoggerFactory.getLogger(RabbitMqTaskMessageBroker.class);
 
-  public RabbitMqTaskMessageBroker(TaskService taskService, ObjectMapper objectMapper) {
+  public RabbitMqTaskMessageBroker(final TaskService taskService, final ObjectMapper objectMapper) {
     this.taskService = taskService;
     this.objectMapper = objectMapper;
   }
 
   @RabbitListener(queues = "${message-broker.tasks-queue.name}")
-  public void receiveTask(String taskString, Channel channel,
-      @Header(AmqpHeaders.DELIVERY_TAG) long tag) throws IOException {
+  public void receiveTask(final String taskString, final Channel channel,
+      @Header(AmqpHeaders.DELIVERY_TAG) final long tag) throws IOException {
     try {
-      Task task = objectMapper.readValue(taskString, Task.class);
+      final Task task = objectMapper.readValue(taskString, Task.class);
       logger.debug(
           "Received task {} with topic \"{}\", description \"{}\" and due date \"{}\" from queue.",
           task.id(), task.topic(), task.description(), task.dueDate());
@@ -41,7 +41,7 @@ public class RabbitMqTaskMessageBroker {
             task.id(), task.topic(), task.description(), task.dueDate());
         channel.basicNack(tag, false, false);
       }
-    } catch (Exception exception) {
+    } catch (final Exception exception) {
       logger.error("Failed to deserialize task from JSON: {}", taskString, exception);
       channel.basicNack(tag, false, false);
     }

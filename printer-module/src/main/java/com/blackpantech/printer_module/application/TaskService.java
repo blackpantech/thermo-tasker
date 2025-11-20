@@ -12,15 +12,15 @@ public class TaskService {
   private final TaskRepository taskRepository;
   private final Logger logger = LoggerFactory.getLogger(TaskService.class);
 
-  public TaskService(TaskPrinter taskPrinter, TaskRepository taskRepository) {
+  public TaskService(final TaskPrinter taskPrinter, final TaskRepository taskRepository) {
     this.taskPrinter = taskPrinter;
     this.taskRepository = taskRepository;
   }
 
-  public boolean printTask(Task task) {
+  public boolean printTask(final Task task) {
     logger.debug("Printing task {} with topic \"{}\", description \"{}\" and due date \"{}\".",
         task.id(), task.topic(), task.description(), task.dueDate());
-    var printingResult = taskPrinter.printTask(task);
+    final var printingResult = taskPrinter.printTask(task);
 
     if (printingResult) {
       logger.debug(

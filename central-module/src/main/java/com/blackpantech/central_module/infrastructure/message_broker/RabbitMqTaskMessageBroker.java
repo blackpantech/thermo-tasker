@@ -14,19 +14,19 @@ public class RabbitMqTaskMessageBroker implements TaskMessageBroker {
   private final RabbitTemplate rabbitTemplate;
   private final Logger logger = LoggerFactory.getLogger(RabbitMqTaskMessageBroker.class);
 
-  public RabbitMqTaskMessageBroker(Queue tasksQueue, RabbitTemplate rabbitTemplate) {
+  public RabbitMqTaskMessageBroker(final Queue tasksQueue, final RabbitTemplate rabbitTemplate) {
     this.tasksQueue = tasksQueue;
     this.rabbitTemplate = rabbitTemplate;
   }
 
   @Override
-  public void sendTask(Task newTask) throws TaskQueueingException {
+  public void sendTask(final Task newTask) throws TaskQueueingException {
     logger.debug(
         "Sending new task with topic \"{}\", description \"{}\" and due date \"{}\" to queue.",
         newTask.topic(), newTask.description(), newTask.dueDate());
     try {
       rabbitTemplate.convertAndSend(tasksQueue.getName(), newTask);
-    } catch (AmqpException exception) {
+    } catch (final AmqpException exception) {
       logger.error("Failed to queue task: {} - {} - {}", newTask.topic(), newTask.description(),
           newTask.dueDate(), exception);
       throw new TaskQueueingException(

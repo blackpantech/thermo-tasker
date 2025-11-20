@@ -35,15 +35,15 @@ public class CentralModuleController {
   }
 
   @GetMapping("/new")
-  public String getNewTaskPage(Model model) {
-    TaskForm newTaskForm = new TaskForm("", "");
+  public String getNewTaskPage(final Model model) {
+    final TaskForm newTaskForm = new TaskForm("", "");
     model.addAttribute("newTaskForm", newTaskForm);
     logger.debug("Serving task creation page.");
     return NEW_VIEW;
   }
 
   @GetMapping("/tasks")
-  public String getTasksPage(Model model) {
+  public String getTasksPage(final Model model) {
     logger.debug("Getting all current tasks.");
     model.addAttribute("tasks", taskService.getTasks());
     logger.debug("Serving current tasks list page.");
@@ -51,20 +51,21 @@ public class CentralModuleController {
   }
 
   @PostMapping("/tasks")
-  public String postNewTask(@ModelAttribute("newTaskForm") TaskForm newTaskForm, Model model) {
+  public String postNewTask(@ModelAttribute("newTaskForm") final TaskForm newTaskForm,
+      final Model model) {
     logger.debug("Validating new task.");
     if (newTaskForm.topic().isBlank() || newTaskForm.description().isBlank()) {
       logger.error("Task's topic and description cannot be empty.");
       model.addAttribute("errorMessage", "Task's topic and description cannot be empty.");
       return NEW_VIEW;
     }
-    var newTask =
+    final var newTask =
         new Task(UUID.randomUUID(), newTaskForm.topic(), newTaskForm.description(), Instant.now());
     logger.debug("Creating new task with topic \"{}\" and description \"{}\".", newTaskForm.topic(),
         newTaskForm.description());
     try {
       taskService.createTask(newTask);
-    } catch (TaskQueueingException e) {
+    } catch (final TaskQueueingException e) {
       logger.error("Could not queue task with topic \"{}\", description \"{}\" and due date {}.",
           newTask.topic(), newTask.description(), newTask.dueDate());
       model.addAttribute("errorMessage",
@@ -72,7 +73,7 @@ public class CentralModuleController {
               "Could not queue task with topic \"%s\", description \"%s\" and due date %s.",
               newTask.topic(), newTask.description(), newTask.dueDate()));
       return NEW_VIEW;
-    } catch (TaskPersistenceException exception) {
+    } catch (final TaskPersistenceException exception) {
       logger.error("Could not persist task with topic \"{}\", description \"{}\" and due date {}.",
           newTask.topic(), newTask.description(), newTask.dueDate());
       model.addAttribute("errorMessage",

@@ -6,7 +6,7 @@ public enum PrintingStatus {
   @SuppressWarnings("unused")
   private final int value;
 
-  private PrintingStatus(int i) {
+  private PrintingStatus(final int i) {
     value = i;
   }
 }

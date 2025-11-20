@@ -53,14 +53,14 @@ public class JpaTaskRepositoryTest {
   @DisplayName("Should create a task")
   void shouldCreateTask() {
     // GIVEN
-    var dueDate = Instant.now();
+    final var dueDate = Instant.now();
     final var task = new Task(UUID.randomUUID(), "Groceries", "Get milk", dueDate);
 
     // WHEN
     assertDoesNotThrow(() -> jpaTaskRepository.createTask(task));
 
     // THEN
-    TaskEntity expectedTask = new TaskEntity(task.id(), task.topic(), task.description(),
+    final TaskEntity expectedTask = new TaskEntity(task.id(), task.topic(), task.description(),
         task.dueDate(), PrintingStatus.PENDING);
     verify(taskJpaRepository).save(expectedTask);
     verifyNoMoreInteractions(taskJpaRepository);

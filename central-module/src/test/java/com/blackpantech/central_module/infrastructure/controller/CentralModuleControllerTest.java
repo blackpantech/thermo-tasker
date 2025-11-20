@@ -54,7 +54,7 @@ public class CentralModuleControllerTest {
   @Test
   @DisplayName("Should get tasks page")
   void shouldGetTasks() throws Exception {
-    var tasks = List.of(new Task(UUID.randomUUID(), "Groceries", "Get milk", Instant.now()),
+    final var tasks = List.of(new Task(UUID.randomUUID(), "Groceries", "Get milk", Instant.now()),
         new Task(UUID.randomUUID(), "Kitchen", "Wash the dishes", Instant.now()));
     when(taskService.getTasks()).thenReturn(tasks);
     mockMvc.perform(get("/tasks").accept(MediaType.TEXT_HTML)).andExpect(status().isOk())
@@ -70,13 +70,13 @@ public class CentralModuleControllerTest {
   @Test
   @DisplayName("Should post new task")
   void shouldPostNewTask() throws Exception {
-    var newTaskForm = new TaskForm("Groceries", "Get milk");
+    final var newTaskForm = new TaskForm("Groceries", "Get milk");
     mockMvc
         .perform(post("/tasks").flashAttr("newTaskForm", newTaskForm)
             .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isFound()).andExpect(view().name("redirect:/"));
 
-    Task expectedTask = new Task(null, newTaskForm.topic(), newTaskForm.description(), null);
+    final Task expectedTask = new Task(null, newTaskForm.topic(), newTaskForm.description(), null);
     verify(taskService).createTask(refEq(expectedTask, "id", "dueDate"));
     verifyNoMoreInteractions(taskService);
   }
