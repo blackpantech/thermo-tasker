@@ -3,8 +3,8 @@ spring:
     name: printer-module
   datasource:
     url: jdbc:postgresql://localhost:5432/thermo-tasker
-    username: dev
-    password: dev
+    username: printer_module_user
+    password: printer_module_user
     driverClassName: org.postgresql.Driver
   jpa:
     hibernate:
