@@ -1,0 +1,32 @@
+name: Docker Publish
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Build and push central-module
+        run: |
+          cd central-module
+          docker build -t ghcr.io/${{ github.repository_owner }}/thermo-tasker/central-module:${{ github.ref_name }} .
+          docker push ghcr.io/${{ github.repository_owner }}/thermo-tasker/central-module:${{ github.ref_name }}
+
+      - name: Build and push printer-module
+        run: |
+          cd printer-module
+          docker build -t ghcr.io/${{ github.repository_owner }}/thermo-tasker/printer-module:${{ github.ref_name }} .
+          docker push ghcr.io/${{ github.repository_owner }}/thermo-tasker/printer-module:${{ github.ref_name }}

@@ -46,9 +46,7 @@ services:
 
   # Central Module
   central-module:
-    build:
-      context: ./central-module/
-      dockerfile: Dockerfile
+    image: ghcr.io/blackpantech/thermo-tasker/central-module:v0.0.1-alpha
     container_name: thermo-tasker-central
     restart: unless-stopped
     ports:
@@ -72,9 +70,7 @@ services:
 
   # Printer Module
   printer-module:
-    build:
-      context: ./printer-module/
-      dockerfile: Dockerfile
+    image: ghcr.io/blackpantech/thermo-tasker/printer-module:v0.0.1-alpha
     container_name: thermo-tasker-printer
     restart: unless-stopped
     ports:
