@@ -1,0 +1,107 @@
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: thermo-tasker-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "${POSTGRES_HOSTNAME}:${POSTGRES_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ${CONFIG_FILES_PATH}/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - thermo-tasker-network
+
+  # RabbitMQ Message Broker
+  rabbitmq:
+    image: rabbitmq:4-management-alpine
+    container_name: thermo-tasker-rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
+    ports:
+      - "${RABBITMQ_HOST}:${RABBITMQ_PORT}:5672"
+      - "${RABBITMQ_MANAGEMENT_HOST}:${RABBITMQ_MANAGEMENT_PORT}:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+      - ${CONFIG_FILES_PATH}/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+      - ${CONFIG_FILES_PATH}/definitions.json:/etc/rabbitmq/definitions.json:ro
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "-q", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - thermo-tasker-network
+
+  # Central Module
+  central-module:
+    image: ghcr.io/blackpantech/thermo-tasker/central-module:v0.0.1-alpha
+    container_name: thermo-tasker-central
+    restart: unless-stopped
+    ports:
+      - "${CENTRAL_MODULE_HOST}:${CENTRAL_MODULE_PORT}:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://${SPRING_POSTGRES_HOSTNAME}:${SPRING_POSTGRES_PORT}/${POSTGRES_DB}
+      SPRING_DATASOURCE_USERNAME: ${CENTRAL_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${CENTRAL_DB_PASS}
+      SPRING_RABBITMQ_HOST: ${SPRING_RABBITMQ_HOST}
+      SPRING_RABBITMQ_PORT: ${SPRING_RABBITMQ_PORT}
+      SPRING_RABBITMQ_USERNAME: ${RABBITMQ_USER}
+      SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_PASS}
+      TZ: ${SERVER_TZ}
+    networks:
+      - thermo-tasker-network
+
+  # Printer Module
+  printer-module:
+    image: ghcr.io/blackpantech/thermo-tasker/printer-module:v0.0.1-alpha
+    container_name: thermo-tasker-printer
+    restart: unless-stopped
+    ports:
+      - "${PRINTER_MODULE_HOST}:${PRINTER_MODULE_PORT}:8080"
+    user: "${USER_GID}:7"
+    devices:
+      - ${PRINTER_DEVICE_PATH}:${PRINTER_DEVICE_PATH}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://${SPRING_POSTGRES_HOSTNAME}:${SPRING_POSTGRES_PORT}/${POSTGRES_DB}
+      SPRING_DATASOURCE_USERNAME: ${PRINTER_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${PRINTER_DB_PASS}
+      SPRING_RABBITMQ_HOST: ${SPRING_RABBITMQ_HOST}
+      SPRING_RABBITMQ_PORT: ${SPRING_RABBITMQ_PORT}
+      SPRING_RABBITMQ_USERNAME: ${RABBITMQ_USER}
+      SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_PASS}
+      SERVER_PORT: 8080
+      TZ: ${SERVER_TZ}
+    networks:
+      - thermo-tasker-network
+
+volumes:
+  postgres_data:
+    driver: local
+  rabbitmq_data:
+    driver: local
+
+networks:
+  thermo-tasker-network:
+    driver: bridge
