@@ -47,8 +47,8 @@ services:
   # Central Module
   central-module:
     build:
-      context: .
-      dockerfile: central-module/Dockerfile
+      context: ./central-module/
+      dockerfile: Dockerfile
     container_name: thermo-tasker-central
     restart: unless-stopped
     ports:
@@ -73,8 +73,8 @@ services:
   # Printer Module
   printer-module:
     build:
-      context: .
-      dockerfile: printer-module/Dockerfile
+      context: ./printer-module/
+      dockerfile: Dockerfile
     container_name: thermo-tasker-printer
     restart: unless-stopped
     ports:
