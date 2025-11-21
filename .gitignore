@@ -4,7 +4,7 @@ target/
 !**/src/test/**/target/
 *.log
 .env
-init/
+.init/
 
 ### IntelliJ IDEA ###
 .idea/modules.xml

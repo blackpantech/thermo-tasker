@@ -1,0 +1,70 @@
+{
+  "users": [
+    {
+      "name": "guest",
+      "password_hash": "P5jMz43T09BRTXxpsuKP8gdhFfGHuPLkF8jgkDe6GLvDAY6l",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": [
+        "administrator"
+      ],
+      "limits": {}
+    }
+  ],
+  "vhosts": [
+    {
+      "name": "/"
+    }
+  ],
+  "permissions": [
+    {
+      "user": "guest",
+      "vhost": "/",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    }
+  ],
+  "queues": [
+    {
+      "name": "tasks.queue",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-dead-letter-exchange": "dlx.exchange",
+        "x-dead-letter-routing-key": "dlq.routingKey",
+        "x-queue-type": "classic"
+      }
+    },
+    {
+      "name": "dlq.queue",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-queue-type": "classic"
+      }
+    }
+  ],
+  "exchanges": [
+    {
+      "name": "dlx.exchange",
+      "vhost": "/",
+      "type": "direct",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    }
+  ],
+  "bindings": [
+    {
+      "source": "dlx.exchange",
+      "vhost": "/",
+      "destination": "dlq.queue",
+      "destination_type": "queue",
+      "routing_key": "dlq.routingKey",
+      "arguments": {}
+    }
+  ]
+}
