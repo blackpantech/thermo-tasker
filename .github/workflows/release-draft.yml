@@ -1,0 +1,22 @@
+name: Main
+
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        if: github.ref_type == 'tag'
+        with:
+          draft: true
+          files: |
+            docker/docker-compose.yml
+            docker/example.env
+            'docker/initialization files/definitions.json'
+            'docker/initialization files/init.sql'
+            'docker/initialization files/rabbitmq.conf'
+            
