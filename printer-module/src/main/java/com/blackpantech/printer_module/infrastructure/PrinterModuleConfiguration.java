@@ -1,11 +1,5 @@
 package com.blackpantech.printer_module.infrastructure;
 
-import java.io.IOException;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
 import com.blackpantech.printer_module.application.TaskService;
 import com.blackpantech.printer_module.domain.ports.TaskPrinter;
 import com.blackpantech.printer_module.domain.ports.TaskRepository;
@@ -17,6 +11,9 @@ import com.blackpantech.printer_module.infrastructure.repository.JpaTaskReposito
 import com.blackpantech.printer_module.infrastructure.repository.TaskJpaRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class PrinterModuleConfiguration {
@@ -24,8 +21,8 @@ public class PrinterModuleConfiguration {
   private String printerPath;
 
   @Bean
-  public TaskService taskService(final TaskPrinter taskPrinter,
-      final TaskRepository taskRepository) {
+  public TaskService taskService(
+      final TaskPrinter taskPrinter, final TaskRepository taskRepository) {
     return new TaskService(taskPrinter, taskRepository);
   }
 
@@ -35,7 +32,7 @@ public class PrinterModuleConfiguration {
   }
 
   @Bean
-  public TaskPrinter taskPrinter(final OutputStreamFactory outputStreamFactory) throws IOException {
+  public TaskPrinter taskPrinter(final OutputStreamFactory outputStreamFactory) {
     return new EpsonTaskPrinter(outputStreamFactory);
   }
 
@@ -52,8 +49,8 @@ public class PrinterModuleConfiguration {
   }
 
   @Bean
-  public RabbitMqTaskMessageBroker rabbitMqTaskMessageBroker(final TaskService taskService,
-      final ObjectMapper objectMapper) {
+  public RabbitMqTaskMessageBroker rabbitMqTaskMessageBroker(
+      final TaskService taskService, final ObjectMapper objectMapper) {
     return new RabbitMqTaskMessageBroker(taskService, objectMapper);
   }
 }

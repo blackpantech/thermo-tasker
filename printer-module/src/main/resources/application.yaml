@@ -4,7 +4,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/thermo-tasker
     username: printer_module_user
-    password: printer_module_user
+    password: printer_module_user_pass
     driverClassName: org.postgresql.Driver
   jpa:
     hibernate:
@@ -31,4 +31,4 @@ message-broker:
     name: tasks.queue
 
 printer:
-  path: /dev/usb/lp3
+  path: /dev/usb/lp0

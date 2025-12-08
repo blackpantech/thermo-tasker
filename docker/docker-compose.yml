@@ -46,7 +46,7 @@ services:
 
   # Central Module
   central-module:
-    image: ghcr.io/blackpantech/thermo-tasker/central-module:v0.0.1-alpha
+    image: ghcr.io/blackpantech/thermo-tasker/central-module:latest
     container_name: thermo-tasker-central
     restart: unless-stopped
     ports:
@@ -70,14 +70,14 @@ services:
 
   # Printer Module
   printer-module:
-    image: ghcr.io/blackpantech/thermo-tasker/printer-module:v0.0.1-alpha
+    image: ghcr.io/blackpantech/thermo-tasker/printer-module:latest
     container_name: thermo-tasker-printer
     restart: unless-stopped
     ports:
       - "${PRINTER_MODULE_HOST}:${PRINTER_MODULE_PORT}:8080"
     user: "${USER_GID}:7"
     devices:
-      - ${PRINTER_DEVICE_PATH}:${PRINTER_DEVICE_PATH}
+      - ${PRINTER_DEVICE_PATH}:/dev/usb/lp0
     depends_on:
       postgres:
         condition: service_healthy

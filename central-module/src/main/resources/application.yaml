@@ -4,7 +4,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/thermo-tasker
     username: central_module_user
-    password: central_module_user
+    password: central_module_user_pass
     driverClassName: org.postgresql.Driver
   jpa:
     hibernate:
