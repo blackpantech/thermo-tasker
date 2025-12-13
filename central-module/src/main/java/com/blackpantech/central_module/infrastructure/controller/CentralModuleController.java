@@ -36,7 +36,7 @@ public class CentralModuleController {
 
   @GetMapping("/new")
   public String getNewTaskPage(final Model model) {
-    final TaskForm newTaskForm = new TaskForm("", "");
+    final TaskForm newTaskForm = new TaskForm("", "", null);
     model.addAttribute("newTaskForm", newTaskForm);
     logger.debug("Serving task creation page.");
     return NEW_VIEW;

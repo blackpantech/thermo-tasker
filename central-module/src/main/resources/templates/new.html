@@ -21,6 +21,10 @@
                 <label for="description">Description</label>
                 <input id="description" placeholder="Description" required th:field="*{description}" type="text" />
             </div>
+            <div class="form-group">
+                <label for="dueDate">Due date</label>
+                <input id="dueDate" placeholder="Due date" th:field="*{dueDate}" type="datetime-local" />
+            </div>
             <div class="error" th:if="${errorMessage}" th:text="${errorMessage}"></div>
             <button type="submit">Create task</button>
         </form>
