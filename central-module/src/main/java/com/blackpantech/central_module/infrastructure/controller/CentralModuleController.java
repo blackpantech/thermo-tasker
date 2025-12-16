@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.time.Instant;
+import java.time.ZoneId;
 import java.util.UUID;
 
 @Controller
@@ -59,10 +60,19 @@ public class CentralModuleController {
       model.addAttribute("errorMessage", "Task's topic and description cannot be empty.");
       return NEW_VIEW;
     }
-    final var newTask =
-        new Task(UUID.randomUUID(), newTaskForm.topic(), newTaskForm.description(), Instant.now());
-    logger.debug("Creating new task with topic \"{}\" and description \"{}\".", newTaskForm.topic(),
-        newTaskForm.description());
+    Task newTask;
+    if (newTaskForm.dueDate() == null) {
+      newTask = new Task(UUID.randomUUID(), newTaskForm.topic(), newTaskForm.description(), null);
+      logger.debug("Creating new task with topic \"{}\" and description \"{}\".",
+          newTaskForm.topic(), newTaskForm.description());
+    } else {
+      final Instant dueDate = newTaskForm.dueDate().atZone(ZoneId.systemDefault()).toInstant();
+      newTask =
+          new Task(UUID.randomUUID(), newTaskForm.topic(), newTaskForm.description(), dueDate);
+      logger.debug(
+          "Creating new task with topic \"{}\", description \"{}\" and scheduled date \"{}\".",
+          newTaskForm.topic(), newTaskForm.description(), newTaskForm.dueDate());
+    }
     try {
       taskService.createTask(newTask);
     } catch (final TaskQueueingException e) {
