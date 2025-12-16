@@ -5,6 +5,7 @@ import com.blackpantech.central_module.domain.exceptions.TaskPersistenceExceptio
 import com.blackpantech.central_module.domain.exceptions.TaskQueueingException;
 import com.blackpantech.central_module.domain.ports.TaskMessageBroker;
 import com.blackpantech.central_module.domain.ports.TaskRepository;
+import com.blackpantech.central_module.domain.ports.TaskScheduler;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,12 +13,14 @@ import org.slf4j.LoggerFactory;
 public class TaskService {
   private final TaskRepository taskRepository;
   private final TaskMessageBroker taskMessageBroker;
+  private final TaskScheduler taskScheduler;
   private final Logger logger = LoggerFactory.getLogger(TaskService.class);
 
-  public TaskService(final TaskRepository taskRepository,
-      final TaskMessageBroker taskMessageBroker) {
+  public TaskService(final TaskRepository taskRepository, final TaskMessageBroker taskMessageBroker,
+      final TaskScheduler taskScheduler) {
     this.taskRepository = taskRepository;
     this.taskMessageBroker = taskMessageBroker;
+    this.taskScheduler = taskScheduler;
   }
 
   public List<Task> getTasks() {

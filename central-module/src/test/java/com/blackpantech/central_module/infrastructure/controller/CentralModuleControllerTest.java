@@ -70,7 +70,7 @@ public class CentralModuleControllerTest {
   @Test
   @DisplayName("Should post new task")
   void shouldPostNewTask() throws Exception {
-    final var newTaskForm = new TaskForm("Groceries", "Get milk");
+    final var newTaskForm = new TaskForm("Groceries", "Get milk", null);
     mockMvc
         .perform(post("/tasks").flashAttr("newTaskForm", newTaskForm)
             .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))

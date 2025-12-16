@@ -12,6 +12,7 @@ import com.blackpantech.central_module.domain.exceptions.TaskPersistenceExceptio
 import com.blackpantech.central_module.domain.exceptions.TaskQueueingException;
 import com.blackpantech.central_module.domain.ports.TaskMessageBroker;
 import com.blackpantech.central_module.domain.ports.TaskRepository;
+import com.blackpantech.central_module.domain.ports.TaskScheduler;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -26,7 +27,10 @@ public class TaskServiceTest {
   private final TaskRepository taskRepository = mock(TaskRepository.class);
   @Mock
   private final TaskMessageBroker taskMessageBroker = mock(TaskMessageBroker.class);
-  private final TaskService taskService = new TaskService(taskRepository, taskMessageBroker);
+  @Mock
+  private final TaskScheduler taskScheduler = mock(TaskScheduler.class);
+  private final TaskService taskService =
+      new TaskService(taskRepository, taskMessageBroker, taskScheduler);
   private final List<Task> tasks =
       List.of(new Task(UUID.randomUUID(), "Groceries", "Get milk", Instant.now()),
           new Task(UUID.randomUUID(), "Kitchen", "Wash the dishes", Instant.now()));
