@@ -8,6 +8,10 @@ import com.blackpantech.central_module.infrastructure.message_broker.RabbitMqTas
 import com.blackpantech.central_module.infrastructure.repository.JpaTaskRepository;
 import com.blackpantech.central_module.infrastructure.repository.TaskJpaRepository;
 import com.blackpantech.central_module.infrastructure.scheduler.QuartzTaskScheduler;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.SchedulerFactory;
+import org.quartz.impl.StdSchedulerFactory;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
@@ -46,8 +50,17 @@ public class CentralModuleConfiguration {
   }
 
   @Bean
-  public TaskScheduler taskScheduler(final TaskMessageBroker taskMessageBroker) {
-    return new QuartzTaskScheduler(taskMessageBroker);
+  public TaskScheduler taskScheduler(final TaskMessageBroker taskMessageBroker,
+      final Scheduler scheduler) {
+    return new QuartzTaskScheduler(taskMessageBroker, scheduler);
+  }
+
+  @Bean
+  public Scheduler scheduler() throws SchedulerException {
+    SchedulerFactory schedulerFactory = new StdSchedulerFactory();
+    Scheduler scheduler = schedulerFactory.getScheduler();
+    scheduler.start();
+    return scheduler;
   }
 
   @SuppressWarnings("null")
