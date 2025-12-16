@@ -4,6 +4,7 @@ import com.blackpantech.central_module.application.TaskService;
 import com.blackpantech.central_module.domain.Task;
 import com.blackpantech.central_module.domain.exceptions.TaskPersistenceException;
 import com.blackpantech.central_module.domain.exceptions.TaskQueueingException;
+import com.blackpantech.central_module.domain.exceptions.TaskSchedulingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -89,6 +90,14 @@ public class CentralModuleController {
       model.addAttribute("errorMessage",
           String.format(
               "Could not persist task with topic \"%s\", description \"%s\" and due date %s.",
+              newTask.topic(), newTask.description(), newTask.dueDate()));
+      return NEW_VIEW;
+    } catch (final TaskSchedulingException exception) {
+      logger.error("Could not schedule task with topic \"{}\", description \"{}\" and due date {}.",
+          newTask.topic(), newTask.description(), newTask.dueDate());
+      model.addAttribute("errorMessage",
+          String.format(
+              "Could not schedule task with topic \"%s\", description \"%s\" and due date %s.",
               newTask.topic(), newTask.description(), newTask.dueDate()));
       return NEW_VIEW;
     }
