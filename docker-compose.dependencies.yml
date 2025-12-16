@@ -11,7 +11,6 @@ services:
     ports:
       - "${POSTGRES_HOSTNAME}:${POSTGRES_PORT}:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
       - ${CONFIG_FILES_PATH}/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
@@ -33,7 +32,6 @@ services:
       - "${RABBITMQ_HOST}:${RABBITMQ_PORT}:5672"
       - "${RABBITMQ_MANAGEMENT_HOST}:${RABBITMQ_MANAGEMENT_PORT}:15672"
     volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
       - ${CONFIG_FILES_PATH}/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
       - ${CONFIG_FILES_PATH}/definitions.json:/etc/rabbitmq/definitions.json:ro
     healthcheck:
