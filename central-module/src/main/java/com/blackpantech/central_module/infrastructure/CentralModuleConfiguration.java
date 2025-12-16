@@ -50,6 +50,7 @@ public class CentralModuleConfiguration {
     return new QuartzTaskScheduler(taskMessageBroker);
   }
 
+  @SuppressWarnings("null")
   @Bean
   public RabbitTemplate rabbitTemplate(final ConnectionFactory connectionFactory) {
     final RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
