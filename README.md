@@ -41,35 +41,47 @@ Key components include:
 
 ### Running the Application
 
-1. Connect the printer to your machine and set write permissions:
+1. Connect the printer to your machine and add your user to the `lp` group:
 ```bash
-sudo chmod 660 /dev/usb/lp*
+usermod -a -G lp $USER
 ```
 
-2. Clone the repository:
+2. Create a repository for the configuration files:
 ```bash
-git clone https://github.com/blackpantech/thermo-tasker.git
+mkdir thermo-tasker
 cd thermo-tasker
 ```
-3. Edit `example.env`, `definitions.json` and `init.sql` files as needed for your environment.
+
+3. Get the config files and edit `example.env`, `definitions.json` and `init.sql` files as needed for your environment:
+```bash
+wget -O docker-compose.yml https://github.com/blackpantech/thermo-tasker/releases/latest/download/docker-compose.yml
+wget -O .env https://github.com/blackpantech/thermo-tasker/releases/latest/download/example.env
+mkdir init
+wget -O init/definitions.json https://github.com/blackpantech/thermo-tasker/releases/latest/download/definitions.json
+wget -O init/init.sql https://github.com/blackpantech/thermo-tasker/releases/latest/download/init.sql
+wget -O init/rabbitmq.conf https://github.com/blackpantech/thermo-tasker/releases/latest/download/rabbitmq.conf
+```
 
 4. Start all services with Docker Compose:
 ```bash
-docker-compose up -d
+docker compose pull && docker compose up -d
 ```
 
 5. Access the web interface at `http://localhost:8080`
 
 6. Monitor services:
 ```bash
-docker-compose logs -f
+docker compose logs -f
 ```
 
 7. Stop all services:
 ```bash
-docker-compose down
+docker compose down
 ```
 
 ### Service Endpoints
 - **Web Interface and API service**: http://localhost:8080
 - **RabbitMQ Management**: http://localhost:15672 (by default: guest/guest)
+
+## Notes
+I could only test the application with an Epson TM-T20III thermal printer so check the compatibility of your printer beforehand.
