@@ -4,6 +4,7 @@ import com.blackpantech.central_module.application.TaskService;
 import com.blackpantech.central_module.domain.Task;
 import com.blackpantech.central_module.domain.exceptions.TaskPersistenceException;
 import com.blackpantech.central_module.domain.exceptions.TaskQueueingException;
+import com.blackpantech.central_module.domain.exceptions.TaskSchedulingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.time.Instant;
+import java.time.ZoneId;
 import java.util.UUID;
 
 @Controller
@@ -36,7 +38,7 @@ public class CentralModuleController {
 
   @GetMapping("/new")
   public String getNewTaskPage(final Model model) {
-    final TaskForm newTaskForm = new TaskForm("", "");
+    final TaskForm newTaskForm = new TaskForm("", "", null);
     model.addAttribute("newTaskForm", newTaskForm);
     logger.debug("Serving task creation page.");
     return NEW_VIEW;
@@ -59,10 +61,19 @@ public class CentralModuleController {
       model.addAttribute("errorMessage", "Task's topic and description cannot be empty.");
       return NEW_VIEW;
     }
-    final var newTask =
-        new Task(UUID.randomUUID(), newTaskForm.topic(), newTaskForm.description(), Instant.now());
-    logger.debug("Creating new task with topic \"{}\" and description \"{}\".", newTaskForm.topic(),
-        newTaskForm.description());
+    Task newTask;
+    if (newTaskForm.dueDate() == null) {
+      newTask = new Task(UUID.randomUUID(), newTaskForm.topic(), newTaskForm.description(), null);
+      logger.debug("Creating new task with topic \"{}\" and description \"{}\".",
+          newTaskForm.topic(), newTaskForm.description());
+    } else {
+      final Instant dueDate = newTaskForm.dueDate().atZone(ZoneId.systemDefault()).toInstant();
+      newTask =
+          new Task(UUID.randomUUID(), newTaskForm.topic(), newTaskForm.description(), dueDate);
+      logger.debug(
+          "Creating new task with topic \"{}\", description \"{}\" and scheduled date \"{}\".",
+          newTaskForm.topic(), newTaskForm.description(), newTaskForm.dueDate());
+    }
     try {
       taskService.createTask(newTask);
     } catch (final TaskQueueingException e) {
@@ -79,6 +90,14 @@ public class CentralModuleController {
       model.addAttribute("errorMessage",
           String.format(
               "Could not persist task with topic \"%s\", description \"%s\" and due date %s.",
+              newTask.topic(), newTask.description(), newTask.dueDate()));
+      return NEW_VIEW;
+    } catch (final TaskSchedulingException exception) {
+      logger.error("Could not schedule task with topic \"{}\", description \"{}\" and due date {}.",
+          newTask.topic(), newTask.description(), newTask.dueDate());
+      model.addAttribute("errorMessage",
+          String.format(
+              "Could not schedule task with topic \"%s\", description \"%s\" and due date %s.",
               newTask.topic(), newTask.description(), newTask.dueDate()));
       return NEW_VIEW;
     }

@@ -3,9 +3,15 @@ package com.blackpantech.central_module.infrastructure;
 import com.blackpantech.central_module.application.TaskService;
 import com.blackpantech.central_module.domain.ports.TaskMessageBroker;
 import com.blackpantech.central_module.domain.ports.TaskRepository;
+import com.blackpantech.central_module.domain.ports.TaskScheduler;
 import com.blackpantech.central_module.infrastructure.message_broker.RabbitMqTaskMessageBroker;
 import com.blackpantech.central_module.infrastructure.repository.JpaTaskRepository;
 import com.blackpantech.central_module.infrastructure.repository.TaskJpaRepository;
+import com.blackpantech.central_module.infrastructure.scheduler.QuartzTaskScheduler;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.SchedulerFactory;
+import org.quartz.impl.StdSchedulerFactory;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
@@ -44,6 +50,21 @@ public class CentralModuleConfiguration {
   }
 
   @Bean
+  public TaskScheduler taskScheduler(final TaskMessageBroker taskMessageBroker,
+      final Scheduler scheduler) {
+    return new QuartzTaskScheduler(taskMessageBroker, scheduler);
+  }
+
+  @Bean
+  public Scheduler scheduler() throws SchedulerException {
+    SchedulerFactory schedulerFactory = new StdSchedulerFactory();
+    Scheduler scheduler = schedulerFactory.getScheduler();
+    scheduler.start();
+    return scheduler;
+  }
+
+  @SuppressWarnings("null")
+  @Bean
   public RabbitTemplate rabbitTemplate(final ConnectionFactory connectionFactory) {
     final RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
     rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
@@ -74,7 +95,7 @@ public class CentralModuleConfiguration {
 
   @Bean
   public TaskService taskService(final TaskRepository taskRepository,
-      final TaskMessageBroker taskMessageBroker) {
-    return new TaskService(taskRepository, taskMessageBroker);
+      final TaskMessageBroker taskMessageBroker, final TaskScheduler taskScheduler) {
+    return new TaskService(taskRepository, taskMessageBroker, taskScheduler);
   }
 }

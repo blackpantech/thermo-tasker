@@ -2,6 +2,7 @@ package com.blackpantech.central_module.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -10,8 +11,10 @@ import static org.mockito.Mockito.when;
 import com.blackpantech.central_module.domain.Task;
 import com.blackpantech.central_module.domain.exceptions.TaskPersistenceException;
 import com.blackpantech.central_module.domain.exceptions.TaskQueueingException;
+import com.blackpantech.central_module.domain.exceptions.TaskSchedulingException;
 import com.blackpantech.central_module.domain.ports.TaskMessageBroker;
 import com.blackpantech.central_module.domain.ports.TaskRepository;
+import com.blackpantech.central_module.domain.ports.TaskScheduler;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -26,7 +29,10 @@ public class TaskServiceTest {
   private final TaskRepository taskRepository = mock(TaskRepository.class);
   @Mock
   private final TaskMessageBroker taskMessageBroker = mock(TaskMessageBroker.class);
-  private final TaskService taskService = new TaskService(taskRepository, taskMessageBroker);
+  @Mock
+  private final TaskScheduler taskScheduler = mock(TaskScheduler.class);
+  private final TaskService taskService =
+      new TaskService(taskRepository, taskMessageBroker, taskScheduler);
   private final List<Task> tasks =
       List.of(new Task(UUID.randomUUID(), "Groceries", "Get milk", Instant.now()),
           new Task(UUID.randomUUID(), "Kitchen", "Wash the dishes", Instant.now()));
@@ -47,8 +53,23 @@ public class TaskServiceTest {
   }
 
   @Test
-  @DisplayName("Should create new task")
-  void shouldCreateTask() throws TaskQueueingException, TaskPersistenceException {
+  @DisplayName("Should create new task without a due date.")
+  void shouldCreateTaskWithoutDueDate() throws TaskQueueingException, TaskPersistenceException {
+    // GIVEN
+    final var newTask = new Task(UUID.randomUUID(), "Groceries", "Get milk", null);
+
+    // WHEN
+    assertDoesNotThrow(() -> taskService.createTask(newTask));
+
+    // THEN
+    verify(taskMessageBroker).sendTask(argThat(task -> task.dueDate() != null));
+    verify(taskRepository).createTask(argThat(task -> task.dueDate() != null));
+    verifyNoMoreInteractions(taskRepository, taskMessageBroker);
+  }
+
+  @Test
+  @DisplayName("Should create new task with a due date.")
+  void shouldCreateTaskWithDueDate() throws TaskPersistenceException, TaskSchedulingException {
     // GIVEN
     final var newTask = new Task(UUID.randomUUID(), "Groceries", "Get milk", Instant.now());
 
@@ -56,8 +77,8 @@ public class TaskServiceTest {
     assertDoesNotThrow(() -> taskService.createTask(newTask));
 
     // THEN
-    verify(taskMessageBroker).sendTask(newTask);
+    verify(taskScheduler).scheduleTask(newTask);
     verify(taskRepository).createTask(newTask);
-    verifyNoMoreInteractions(taskRepository, taskMessageBroker);
+    verifyNoMoreInteractions(taskRepository, taskScheduler);
   }
 }

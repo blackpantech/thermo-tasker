@@ -11,6 +11,8 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,6 +37,7 @@ public class CentralModuleControllerTest {
   @MockitoBean
   private TaskService taskService;
 
+  @SuppressWarnings("null")
   @Test
   @DisplayName("Should get home page")
   void shouldGetHomePage() throws Exception {
@@ -43,6 +46,7 @@ public class CentralModuleControllerTest {
         .andExpect(view().name("index"));
   }
 
+  @SuppressWarnings("null")
   @Test
   @DisplayName("Should get new task page")
   void shouldGetNewTaskPage() throws Exception {
@@ -51,6 +55,7 @@ public class CentralModuleControllerTest {
         .andExpect(view().name("new"));
   }
 
+  @SuppressWarnings("null")
   @Test
   @DisplayName("Should get tasks page")
   void shouldGetTasks() throws Exception {
@@ -67,17 +72,34 @@ public class CentralModuleControllerTest {
     verifyNoMoreInteractions(taskService);
   }
 
+  @SuppressWarnings("null")
   @Test
   @DisplayName("Should post new task")
   void shouldPostNewTask() throws Exception {
-    final var newTaskForm = new TaskForm("Groceries", "Get milk");
+    final var newTaskForm = new TaskForm("Groceries", "Get milk", null);
     mockMvc
         .perform(post("/tasks").flashAttr("newTaskForm", newTaskForm)
             .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isFound()).andExpect(view().name("redirect:/"));
 
     final Task expectedTask = new Task(null, newTaskForm.topic(), newTaskForm.description(), null);
-    verify(taskService).createTask(refEq(expectedTask, "id", "dueDate"));
+    verify(taskService).createTask(refEq(expectedTask, "id"));
+    verifyNoMoreInteractions(taskService);
+  }
+
+  @SuppressWarnings("null")
+  @Test
+  @DisplayName("Should post new task with due date")
+  void shouldPostNewTaskWithDueDate() throws Exception {
+    final var newTaskForm = new TaskForm("Groceries", "Get milk", LocalDateTime.now());
+    mockMvc
+        .perform(post("/tasks").flashAttr("newTaskForm", newTaskForm)
+            .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isFound()).andExpect(view().name("redirect:/"));
+
+    final Task expectedTask = new Task(null, newTaskForm.topic(), newTaskForm.description(),
+        newTaskForm.dueDate().atZone(ZoneId.systemDefault()).toInstant());
+    verify(taskService).createTask(refEq(expectedTask, "id"));
     verifyNoMoreInteractions(taskService);
   }
 }

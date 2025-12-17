@@ -1,0 +1,53 @@
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: thermo-tasker-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "${POSTGRES_HOSTNAME}:${POSTGRES_PORT}:5432"
+    volumes:
+      - ${CONFIG_FILES_PATH}/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - thermo-tasker-network
+
+  # RabbitMQ Message Broker
+  rabbitmq:
+    image: rabbitmq:4-management-alpine
+    container_name: thermo-tasker-rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
+    ports:
+      - "${RABBITMQ_HOST}:${RABBITMQ_PORT}:5672"
+      - "${RABBITMQ_MANAGEMENT_HOST}:${RABBITMQ_MANAGEMENT_PORT}:15672"
+    volumes:
+      - ${CONFIG_FILES_PATH}/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+      - ${CONFIG_FILES_PATH}/definitions.json:/etc/rabbitmq/definitions.json:ro
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "-q", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - thermo-tasker-network
+
+volumes:
+  postgres_data:
+    driver: local
+  rabbitmq_data:
+    driver: local
+
+networks:
+  thermo-tasker-network:
+    driver: bridge

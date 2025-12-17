@@ -1,11 +1,10 @@
-package com.blackpantech.central_module.infrastructure.messsage_broker;
+package com.blackpantech.central_module.infrastructure.message_broker;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import com.blackpantech.central_module.domain.Task;
-import com.blackpantech.central_module.infrastructure.message_broker.RabbitMqTaskMessageBroker;
 import java.time.Instant;
 import java.util.UUID;
 
