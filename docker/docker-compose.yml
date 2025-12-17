@@ -3,7 +3,7 @@ services:
   postgres:
     image: postgres:16-alpine
     container_name: thermo-tasker-postgres
-    restart: unless-stopped
+    restart: always
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -25,7 +25,7 @@ services:
   rabbitmq:
     image: rabbitmq:4-management-alpine
     container_name: thermo-tasker-rabbitmq
-    restart: unless-stopped
+    restart: always
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
@@ -48,7 +48,7 @@ services:
   central-module:
     image: ghcr.io/blackpantech/thermo-tasker/central-module:latest
     container_name: thermo-tasker-central
-    restart: unless-stopped
+    restart: always
     ports:
       - "${CENTRAL_MODULE_HOST}:${CENTRAL_MODULE_PORT}:8080"
     depends_on:
@@ -72,7 +72,7 @@ services:
   printer-module:
     image: ghcr.io/blackpantech/thermo-tasker/printer-module:latest
     container_name: thermo-tasker-printer
-    restart: unless-stopped
+    restart: always
     ports:
       - "${PRINTER_MODULE_HOST}:${PRINTER_MODULE_PORT}:8080"
     user: "${USER_GID}:7"
