@@ -11,16 +11,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.blackpantech.central_module.domain.Task;
 import com.blackpantech.central_module.domain.exceptions.TaskSchedulingException;
-import com.blackpantech.central_module.domain.ports.TaskMessageBroker;
 import com.blackpantech.central_module.domain.ports.TaskScheduler;
 
 public class QuartzTaskScheduler implements TaskScheduler {
-  private final TaskMessageBroker taskMessageBroker;
   private final Scheduler scheduler;
   private final Logger logger = LoggerFactory.getLogger(QuartzTaskScheduler.class);
 
-  public QuartzTaskScheduler(final TaskMessageBroker taskMessageBroker, final Scheduler scheduler) {
-    this.taskMessageBroker = taskMessageBroker;
+  public QuartzTaskScheduler(final Scheduler scheduler) {
     this.scheduler = scheduler;
   }
 
@@ -31,9 +28,7 @@ public class QuartzTaskScheduler implements TaskScheduler {
     JobDetail sendTaskJobDetail = newJob(SendTaskJob.class)
         .withIdentity(newTask.id().toString(), SchedulerConstants.SEND_TASK_GROUP).build();
     sendTaskJobDetail.getJobDataMap().put(SchedulerConstants.NEW_TASK, newTask);
-    sendTaskJobDetail.getJobDataMap().put(SchedulerConstants.TASK_MESSAGE_BROKER,
-        taskMessageBroker);
-    SimpleTrigger sendTaskTrigger = (SimpleTrigger) newTrigger().forJob(sendTaskJobDetail)
+    SimpleTrigger sendTaskTrigger = (SimpleTrigger) newTrigger()
         .withIdentity(newTask.id().toString(), SchedulerConstants.SEND_TASK_GROUP)
         .startAt(newTask.dueDate()).build();
     try {

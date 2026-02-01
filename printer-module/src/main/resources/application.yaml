@@ -2,19 +2,19 @@ spring:
   application:
     name: printer-module
   datasource:
-    url: jdbc:postgresql://localhost:5432/thermo-tasker
-    username: printer_module_user
-    password: printer_module_user_pass
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:thermo-tasker}
+    username: ${DB_USER:printer_module_user}
+    password: ${DB_PASSWORD:printer_module_user_pass}
     driverClassName: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: none
     show-sql: true
   rabbitmq:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USER:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
     listener:
       simple:
         acknowledge-mode: manual
@@ -23,12 +23,12 @@ spring:
 message-broker:
   dead-letter:
     exchange:
-      name: dlx.exchange
+      name: ${DEAD_LETTER_EXCHANGE_NAME:dlx.exchange}
     queue:
-      name: dlq.queue
-      routing-key: dlq.routingKey
+      name: ${DEAD_LETTER_QUEUE_NAME:dlq.queue}
+      routing-key: ${DEAD_LETTER_ROUTING_KEY:dlq.routingKey}
   tasks-queue:
-    name: tasks.queue
+    name: ${TASKS_QUEUE_NAME:tasks.queue}
 
 printer:
   path: /dev/usb/lp0

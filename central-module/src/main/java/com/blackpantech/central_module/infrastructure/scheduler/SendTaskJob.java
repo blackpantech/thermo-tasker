@@ -5,12 +5,16 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import com.blackpantech.central_module.domain.Task;
 import com.blackpantech.central_module.domain.exceptions.TaskQueueingException;
 import com.blackpantech.central_module.domain.ports.TaskMessageBroker;
 
 public class SendTaskJob implements Job {
   private final Logger logger = LoggerFactory.getLogger(SendTaskJob.class);
+
+  @Autowired
+  private TaskMessageBroker taskMessageBroker;
 
   public SendTaskJob() {
     // Instances of Job must have a public no-argument constructor.
@@ -22,8 +26,6 @@ public class SendTaskJob implements Job {
     logger.debug(
         "Executing job to send task with topic \"{}\", description \"{}\" and due date {} to queue.",
         task.topic(), task.description(), task.dueDate());
-    var taskMessageBroker = (TaskMessageBroker) context.getJobDetail().getJobDataMap()
-        .get(SchedulerConstants.TASK_MESSAGE_BROKER);
     try {
       taskMessageBroker.sendTask(task);
     } catch (TaskQueueingException taskQueueingException) {

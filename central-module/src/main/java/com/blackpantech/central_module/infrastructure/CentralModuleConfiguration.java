@@ -1,17 +1,6 @@
 package com.blackpantech.central_module.infrastructure;
 
-import com.blackpantech.central_module.application.TaskService;
-import com.blackpantech.central_module.domain.ports.TaskMessageBroker;
-import com.blackpantech.central_module.domain.ports.TaskRepository;
-import com.blackpantech.central_module.domain.ports.TaskScheduler;
-import com.blackpantech.central_module.infrastructure.message_broker.RabbitMqTaskMessageBroker;
-import com.blackpantech.central_module.infrastructure.repository.JpaTaskRepository;
-import com.blackpantech.central_module.infrastructure.repository.TaskJpaRepository;
-import com.blackpantech.central_module.infrastructure.scheduler.QuartzTaskScheduler;
 import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.SchedulerFactory;
-import org.quartz.impl.StdSchedulerFactory;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
@@ -23,6 +12,14 @@ import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import com.blackpantech.central_module.application.TaskService;
+import com.blackpantech.central_module.domain.ports.TaskMessageBroker;
+import com.blackpantech.central_module.domain.ports.TaskRepository;
+import com.blackpantech.central_module.domain.ports.TaskScheduler;
+import com.blackpantech.central_module.infrastructure.message_broker.RabbitMqTaskMessageBroker;
+import com.blackpantech.central_module.infrastructure.repository.JpaTaskRepository;
+import com.blackpantech.central_module.infrastructure.repository.TaskJpaRepository;
+import com.blackpantech.central_module.infrastructure.scheduler.QuartzTaskScheduler;
 
 @Configuration
 public class CentralModuleConfiguration {
@@ -50,17 +47,8 @@ public class CentralModuleConfiguration {
   }
 
   @Bean
-  public TaskScheduler taskScheduler(final TaskMessageBroker taskMessageBroker,
-      final Scheduler scheduler) {
-    return new QuartzTaskScheduler(taskMessageBroker, scheduler);
-  }
-
-  @Bean
-  public Scheduler scheduler() throws SchedulerException {
-    SchedulerFactory schedulerFactory = new StdSchedulerFactory();
-    Scheduler scheduler = schedulerFactory.getScheduler();
-    scheduler.start();
-    return scheduler;
+  public TaskScheduler taskScheduler(final Scheduler scheduler) {
+    return new QuartzTaskScheduler(scheduler);
   }
 
   @SuppressWarnings("null")

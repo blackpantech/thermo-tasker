@@ -9,3 +9,12 @@ spring:
     hibernate:
       ddl-auto: create-drop
     show-sql: true
+  quartz:
+    job-store-type: memory
+    properties:
+      org:
+        quartz:
+          scheduler:
+            instanceName: TestScheduler
+          threadPool:
+            threadCount: 1
