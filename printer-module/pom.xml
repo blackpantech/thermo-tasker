@@ -9,7 +9,7 @@
     </parent>
     <groupId>com.blackpantech</groupId>
     <artifactId>printer-module</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.1</version>
     <name>printer-module</name>
     <description>A (very hot) thermal printer tasker.</description>
 
