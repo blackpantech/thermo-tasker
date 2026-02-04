@@ -6,4 +6,6 @@ public interface TaskRepository {
   void markTaskAsSuccessfullyPrinted(Task task);
 
   void markTaskAsFailedToPrint(Task task);
+
+  boolean isTaskAlreadyPrinted(Task task);
 }

@@ -31,4 +31,16 @@ public class JpaTaskRepository implements TaskRepository {
     taskJpaRepository.updatePrintingStatus(task.id(), PrintingStatus.FAILED);
   }
 
+  @SuppressWarnings("null")
+  @Override
+  public boolean isTaskAlreadyPrinted(final Task task) {
+    final var optionalTaskEntity = taskJpaRepository.findById(task.id());
+    if (optionalTaskEntity.isEmpty()) {
+      logger.debug("Task {} not found in database.", task.id());
+      return false;
+    }
+    final var taskEntity = optionalTaskEntity.get();
+    return taskEntity.getPrintingStatus() == PrintingStatus.SUCCESS;
+  }
+
 }
