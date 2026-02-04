@@ -2,9 +2,9 @@ spring:
   application:
     name: printer-module
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:thermo-tasker}
-    username: ${DB_USER:printer_module_user}
-    password: ${DB_PASSWORD:printer_module_user_pass}
+    url: jdbc:postgresql://${POSTGRES_HOSTNAME:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:thermo-tasker}
+    username: ${PRINTER_DB_USER:central_module_user}
+    password: ${PRINTER_DB_PASS:central_module_user_pass}
     driverClassName: org.postgresql.Driver
   jpa:
     hibernate:
