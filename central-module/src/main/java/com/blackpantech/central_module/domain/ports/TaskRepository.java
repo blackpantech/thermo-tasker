@@ -8,4 +8,6 @@ public interface TaskRepository {
   List<Task> getTasks();
 
   void createTask(Task newTask) throws TaskPersistenceException;
+
+  List<Task> getDueTasks();
 }
