@@ -11,10 +11,8 @@ import static org.mockito.Mockito.when;
 import com.blackpantech.central_module.domain.Task;
 import com.blackpantech.central_module.domain.exceptions.TaskPersistenceException;
 import com.blackpantech.central_module.domain.exceptions.TaskQueueingException;
-import com.blackpantech.central_module.domain.exceptions.TaskSchedulingException;
 import com.blackpantech.central_module.domain.ports.TaskMessageBroker;
 import com.blackpantech.central_module.domain.ports.TaskRepository;
-import com.blackpantech.central_module.domain.ports.TaskScheduler;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -27,12 +25,12 @@ import org.mockito.Mock;
 public class TaskServiceTest {
   @Mock
   private final TaskRepository taskRepository = mock(TaskRepository.class);
+
   @Mock
   private final TaskMessageBroker taskMessageBroker = mock(TaskMessageBroker.class);
-  @Mock
-  private final TaskScheduler taskScheduler = mock(TaskScheduler.class);
-  private final TaskService taskService =
-      new TaskService(taskRepository, taskMessageBroker, taskScheduler);
+
+  private final TaskService taskService = new TaskService(taskRepository, taskMessageBroker);
+
   private final List<Task> tasks =
       List.of(new Task(UUID.randomUUID(), "Groceries", "Get milk", Instant.now()),
           new Task(UUID.randomUUID(), "Kitchen", "Wash the dishes", Instant.now()));
@@ -69,7 +67,7 @@ public class TaskServiceTest {
 
   @Test
   @DisplayName("Should create new task with a due date.")
-  void shouldCreateTaskWithDueDate() throws TaskPersistenceException, TaskSchedulingException {
+  void shouldCreateTaskWithDueDate() throws TaskPersistenceException {
     // GIVEN
     final var newTask = new Task(UUID.randomUUID(), "Groceries", "Get milk", Instant.now());
 
@@ -77,8 +75,7 @@ public class TaskServiceTest {
     assertDoesNotThrow(() -> taskService.createTask(newTask));
 
     // THEN
-    verify(taskScheduler).scheduleTask(newTask);
     verify(taskRepository).createTask(newTask);
-    verifyNoMoreInteractions(taskRepository, taskScheduler);
+    verifyNoMoreInteractions(taskRepository);
   }
 }
