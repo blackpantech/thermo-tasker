@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 import com.blackpantech.central_module.domain.Task;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.junit.jupiter.api.DisplayName;
@@ -89,6 +90,50 @@ public class JpaTaskRepositoryTest {
     assertEquals(tasks.size(), result.size());
     verify(taskJpaRepository).findAllByDueDateBeforeAndPrintingStatusNot(any(),
         eq(PrintingStatus.SUCCESS));
+    verifyNoMoreInteractions(taskJpaRepository);
+  }
+
+  @SuppressWarnings("null")
+  @Test
+  @DisplayName("Should update task printing status")
+  void shouldUpdateTaskPrintingStatus() {
+    // GIVEN
+    final var taskId = UUID.randomUUID();
+    final var dueDate = Instant.now();
+    final PrintingStatus printingStatus = PrintingStatus.PENDING;
+    final Task task = new Task(taskId, "Groceries", "Get milk", dueDate);
+    final var foundTask =
+        new TaskEntity(taskId, "Groceries", "Get milk", dueDate, PrintingStatus.FAILED);
+    when(taskJpaRepository.findById(taskId)).thenReturn(Optional.of(foundTask));
+    final var expectedTask =
+        new TaskEntity(taskId, "Groceries", "Get milk", dueDate, printingStatus);
+
+    // WHEN
+    assertDoesNotThrow(() -> jpaTaskRepository.updateTaskPrintingStatus(task, printingStatus));
+
+    // THEN
+    verify(taskJpaRepository).findById(taskId);
+    verify(taskJpaRepository).save(expectedTask);
+    verifyNoMoreInteractions(taskJpaRepository);
+  }
+
+  @SuppressWarnings("null")
+  @Test
+  @DisplayName("Should update task printing status")
+  void shouldNotUpdateTaskPrintingStatus() {
+    // GIVEN
+    final var taskId = UUID.randomUUID();
+    final var dueDate = Instant.now();
+    final PrintingStatus printingStatus = PrintingStatus.PENDING;
+    final Task task = new Task(taskId, "Groceries", "Get milk", dueDate);
+    final var foundTask = new TaskEntity(taskId, "Groceries", "Get milk", dueDate, printingStatus);
+    when(taskJpaRepository.findById(taskId)).thenReturn(Optional.of(foundTask));
+
+    // WHEN
+    assertDoesNotThrow(() -> jpaTaskRepository.updateTaskPrintingStatus(task, printingStatus));
+
+    // THEN
+    verify(taskJpaRepository).findById(taskId);
     verifyNoMoreInteractions(taskJpaRepository);
   }
 }

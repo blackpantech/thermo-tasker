@@ -8,6 +8,7 @@ import com.blackpantech.central_module.domain.Task;
 import com.blackpantech.central_module.domain.exceptions.TaskQueueingException;
 import com.blackpantech.central_module.domain.ports.TaskMessageBroker;
 import com.blackpantech.central_module.domain.ports.TaskRepository;
+import com.blackpantech.central_module.infrastructure.repository.PrintingStatus;
 
 public class SendDueTasksJob {
   private final Logger logger = LoggerFactory.getLogger(SendDueTasksJob.class);
@@ -24,9 +25,11 @@ public class SendDueTasksJob {
 
   @Scheduled(cron = "0 * * * * *")
   public void sendDueTasksJob() {
-    logger.info("Fetching all due tasks.");
+    logger.debug("Fetching all due tasks.");
     List<Task> dueTasks = taskRepository.getDueTasks();
-    logger.info("Sending due tasks to message broker.");
+    logger.debug("Updating printing status of due tasks to pending.");
+    dueTasks.forEach(task -> taskRepository.updateTaskPrintingStatus(task, PrintingStatus.PENDING));
+    logger.debug("Sending due tasks to message broker.");
     dueTasks.forEach(task -> {
       try {
         taskMessageBroker.sendTask(task);

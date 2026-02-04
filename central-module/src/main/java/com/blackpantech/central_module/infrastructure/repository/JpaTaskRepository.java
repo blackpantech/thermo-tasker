@@ -53,4 +53,18 @@ public class JpaTaskRepository implements TaskRepository {
     return taskEntities.stream().map(taskEntity -> new Task(taskEntity.getId(),
         taskEntity.getTopic(), taskEntity.getDescription(), taskEntity.getDueDate())).toList();
   }
+
+  @SuppressWarnings("null")
+  @Override
+  public void updateTaskPrintingStatus(Task task, PrintingStatus printingStatus) {
+    logger.debug("Updating printing status of task {} to {}.", task.id(), printingStatus);
+    final var optionalTaskEntity = taskJpaRepository.findById(task.id());
+    if (optionalTaskEntity.isPresent()
+        && optionalTaskEntity.get().getPrintingStatus() != printingStatus) {
+      final var taskEntity = optionalTaskEntity.get();
+      taskEntity.setPrintingStatus(printingStatus);
+      logger.debug("Saving updated task {}.", taskEntity.getId());
+      taskJpaRepository.save(taskEntity);
+    }
+  }
 }
