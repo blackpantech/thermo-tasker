@@ -10,4 +10,4 @@ CREATE TABLE IF NOT EXISTS tasks (
 );
 
 GRANT SELECT, UPDATE (printing_status) ON tasks TO printer_module_user;
-GRANT SELECT, INSERT ON tasks TO central_module_user;
+GRANT SELECT, INSERT, UPDATE ON tasks TO central_module_user;

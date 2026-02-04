@@ -2,6 +2,8 @@ package com.blackpantech.central_module.infrastructure.repository;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -9,6 +11,7 @@ import static org.mockito.Mockito.when;
 import com.blackpantech.central_module.domain.Task;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.junit.jupiter.api.DisplayName;
@@ -63,6 +66,74 @@ public class JpaTaskRepositoryTest {
     final TaskEntity expectedTask = new TaskEntity(task.id(), task.topic(), task.description(),
         task.dueDate(), PrintingStatus.PENDING);
     verify(taskJpaRepository).save(expectedTask);
+    verifyNoMoreInteractions(taskJpaRepository);
+  }
+
+  @Test
+  @DisplayName("Should get due tasks")
+  void shouldGetDueTasks() {
+    // GIVEN
+    final List<TaskEntity> tasks = List.of(
+        new TaskEntity(UUID.randomUUID(), "Groceries", "Get milk", Instant.now(),
+            PrintingStatus.PENDING),
+        new TaskEntity(UUID.randomUUID(), "Admin", "Get the mail", Instant.now(),
+            PrintingStatus.PENDING),
+        new TaskEntity(UUID.randomUUID(), "Kitchen", "Wash the dishes", Instant.now(),
+            PrintingStatus.FAILED));
+    when(taskJpaRepository.findAllByDueDateBeforeAndPrintingStatusNot(any(),
+        eq(PrintingStatus.SUCCESS))).thenReturn(tasks);
+
+    // WHEN
+    final List<Task> result = jpaTaskRepository.getDueTasks();
+
+    // THEN
+    assertEquals(tasks.size(), result.size());
+    verify(taskJpaRepository).findAllByDueDateBeforeAndPrintingStatusNot(any(),
+        eq(PrintingStatus.SUCCESS));
+    verifyNoMoreInteractions(taskJpaRepository);
+  }
+
+  @SuppressWarnings("null")
+  @Test
+  @DisplayName("Should update task printing status")
+  void shouldUpdateTaskPrintingStatus() {
+    // GIVEN
+    final var taskId = UUID.randomUUID();
+    final var dueDate = Instant.now();
+    final PrintingStatus printingStatus = PrintingStatus.PENDING;
+    final Task task = new Task(taskId, "Groceries", "Get milk", dueDate);
+    final var foundTask =
+        new TaskEntity(taskId, "Groceries", "Get milk", dueDate, PrintingStatus.FAILED);
+    when(taskJpaRepository.findById(taskId)).thenReturn(Optional.of(foundTask));
+    final var expectedTask =
+        new TaskEntity(taskId, "Groceries", "Get milk", dueDate, printingStatus);
+
+    // WHEN
+    assertDoesNotThrow(() -> jpaTaskRepository.updateTaskPrintingStatus(task, printingStatus));
+
+    // THEN
+    verify(taskJpaRepository).findById(taskId);
+    verify(taskJpaRepository).save(expectedTask);
+    verifyNoMoreInteractions(taskJpaRepository);
+  }
+
+  @SuppressWarnings("null")
+  @Test
+  @DisplayName("Should update task printing status")
+  void shouldNotUpdateTaskPrintingStatus() {
+    // GIVEN
+    final var taskId = UUID.randomUUID();
+    final var dueDate = Instant.now();
+    final PrintingStatus printingStatus = PrintingStatus.PENDING;
+    final Task task = new Task(taskId, "Groceries", "Get milk", dueDate);
+    final var foundTask = new TaskEntity(taskId, "Groceries", "Get milk", dueDate, printingStatus);
+    when(taskJpaRepository.findById(taskId)).thenReturn(Optional.of(foundTask));
+
+    // WHEN
+    assertDoesNotThrow(() -> jpaTaskRepository.updateTaskPrintingStatus(task, printingStatus));
+
+    // THEN
+    verify(taskJpaRepository).findById(taskId);
     verifyNoMoreInteractions(taskJpaRepository);
   }
 }

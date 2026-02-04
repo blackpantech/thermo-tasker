@@ -18,6 +18,11 @@ public class TaskService {
   }
 
   public boolean printTask(final Task task) {
+    if (taskRepository.isTaskAlreadyPrinted(task)) {
+      logger.debug("Task {} is already printed.", task.id());
+      return true;
+    }
+
     logger.debug("Printing task {} with topic \"{}\", description \"{}\" and due date \"{}\".",
         task.id(), task.topic(), task.description(), task.dueDate());
     final var printingResult = taskPrinter.printTask(task);

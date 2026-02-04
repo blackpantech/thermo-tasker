@@ -1,6 +1,5 @@
 package com.blackpantech.central_module.infrastructure;
 
-import org.quartz.Scheduler;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
@@ -15,11 +14,10 @@ import org.springframework.context.annotation.Configuration;
 import com.blackpantech.central_module.application.TaskService;
 import com.blackpantech.central_module.domain.ports.TaskMessageBroker;
 import com.blackpantech.central_module.domain.ports.TaskRepository;
-import com.blackpantech.central_module.domain.ports.TaskScheduler;
 import com.blackpantech.central_module.infrastructure.message_broker.RabbitMqTaskMessageBroker;
 import com.blackpantech.central_module.infrastructure.repository.JpaTaskRepository;
 import com.blackpantech.central_module.infrastructure.repository.TaskJpaRepository;
-import com.blackpantech.central_module.infrastructure.scheduler.QuartzTaskScheduler;
+import com.blackpantech.central_module.infrastructure.scheduler.SendDueTasksJob;
 
 @Configuration
 public class CentralModuleConfiguration {
@@ -44,11 +42,6 @@ public class CentralModuleConfiguration {
   public TaskMessageBroker taskMessageBroker(final Queue tasksQueue,
       final RabbitTemplate rabbitTemplate) {
     return new RabbitMqTaskMessageBroker(tasksQueue, rabbitTemplate);
-  }
-
-  @Bean
-  public TaskScheduler taskScheduler(final Scheduler scheduler) {
-    return new QuartzTaskScheduler(scheduler);
   }
 
   @SuppressWarnings("null")
@@ -83,7 +76,13 @@ public class CentralModuleConfiguration {
 
   @Bean
   public TaskService taskService(final TaskRepository taskRepository,
-      final TaskMessageBroker taskMessageBroker, final TaskScheduler taskScheduler) {
-    return new TaskService(taskRepository, taskMessageBroker, taskScheduler);
+      final TaskMessageBroker taskMessageBroker) {
+    return new TaskService(taskRepository, taskMessageBroker);
+  }
+
+  @Bean
+  public SendDueTasksJob sendDueTasksJob(final TaskMessageBroker taskMessageBroker,
+      final TaskRepository taskRepository) {
+    return new SendDueTasksJob(taskMessageBroker, taskRepository);
   }
 }
