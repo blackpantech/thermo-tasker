@@ -15,18 +15,6 @@ spring:
     port: ${RABBITMQ_PORT:5672}
     username: ${RABBITMQ_USER:guest}
     password: ${RABBITMQ_PASSWORD:guest}
-  quartz:
-    job-store-type: memory
-    properties:
-      org:
-        quartz:
-          scheduler:
-            instanceName: central-module-scheduler
-          threadPool:
-            class: org.quartz.simpl.SimpleThreadPool
-            threadCount: 10
-          jobStore:
-            misfireThreshold: 60000
 
 message-broker:
   dead-letter:
