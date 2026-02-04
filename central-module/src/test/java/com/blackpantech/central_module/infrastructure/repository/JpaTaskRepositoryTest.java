@@ -2,6 +2,8 @@ package com.blackpantech.central_module.infrastructure.repository;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -63,6 +65,30 @@ public class JpaTaskRepositoryTest {
     final TaskEntity expectedTask = new TaskEntity(task.id(), task.topic(), task.description(),
         task.dueDate(), PrintingStatus.PENDING);
     verify(taskJpaRepository).save(expectedTask);
+    verifyNoMoreInteractions(taskJpaRepository);
+  }
+
+  @Test
+  @DisplayName("Should get due tasks")
+  void shouldGetDueTasks() {
+    // GIVEN
+    final List<TaskEntity> tasks = List.of(
+        new TaskEntity(UUID.randomUUID(), "Groceries", "Get milk", Instant.now(),
+            PrintingStatus.PENDING),
+        new TaskEntity(UUID.randomUUID(), "Admin", "Get the mail", Instant.now(),
+            PrintingStatus.PENDING),
+        new TaskEntity(UUID.randomUUID(), "Kitchen", "Wash the dishes", Instant.now(),
+            PrintingStatus.FAILED));
+    when(taskJpaRepository.findAllByDueDateBeforeAndPrintingStatusNot(any(),
+        eq(PrintingStatus.SUCCESS))).thenReturn(tasks);
+
+    // WHEN
+    final List<Task> result = jpaTaskRepository.getDueTasks();
+
+    // THEN
+    assertEquals(tasks.size(), result.size());
+    verify(taskJpaRepository).findAllByDueDateBeforeAndPrintingStatusNot(any(),
+        eq(PrintingStatus.SUCCESS));
     verifyNoMoreInteractions(taskJpaRepository);
   }
 }
