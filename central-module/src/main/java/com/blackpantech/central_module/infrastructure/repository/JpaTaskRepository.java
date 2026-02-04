@@ -4,8 +4,8 @@ import com.blackpantech.central_module.domain.Task;
 import com.blackpantech.central_module.domain.exceptions.TaskPersistenceException;
 import com.blackpantech.central_module.domain.ports.TaskRepository;
 import jakarta.persistence.PersistenceException;
+import java.time.Instant;
 import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,5 +41,16 @@ public class JpaTaskRepository implements TaskRepository {
       throw new TaskPersistenceException(
           String.format("Failed to save task %s", exception.getMessage()));
     }
+  }
+
+  @Override
+  public List<Task> getDueTasks() {
+    logger.debug("Getting all due tasks entities.");
+    final var currentTimestamp = Instant.now();
+    final var taskEntities = taskJpaRepository
+        .findAllByDueDateBeforeAndPrintingStatusNot(currentTimestamp, PrintingStatus.SUCCESS);
+    logger.debug("Mapping all due tasks entities to task domain objects.");
+    return taskEntities.stream().map(taskEntity -> new Task(taskEntity.getId(),
+        taskEntity.getTopic(), taskEntity.getDescription(), taskEntity.getDueDate())).toList();
   }
 }
