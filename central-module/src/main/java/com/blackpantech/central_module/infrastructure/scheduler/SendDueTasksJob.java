@@ -27,10 +27,10 @@ public class SendDueTasksJob {
   public void sendDueTasksJob() {
     logger.debug("Fetching all due tasks.");
     List<Task> dueTasks = taskRepository.getDueTasks();
-    logger.debug("Updating printing status of due tasks to pending.");
-    dueTasks.forEach(task -> taskRepository.updateTaskPrintingStatus(task, PrintingStatus.PENDING));
-    logger.debug("Sending due tasks to message broker.");
     dueTasks.forEach(task -> {
+      logger.debug("Updating printing status of due tasks to pending.");
+      taskRepository.updateTaskPrintingStatus(task, PrintingStatus.PENDING);
+      logger.debug("Sending due tasks to message broker.");
       try {
         taskMessageBroker.sendTask(task);
       } catch (TaskQueueingException taskQueueingException) {
