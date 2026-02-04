@@ -37,6 +37,7 @@ public class TaskServiceTest {
 
     // THEN
     assertTrue(result);
+    verify(taskRepository).isTaskAlreadyPrinted(task);
     verify(taskPrinter).printTask(task);
     verify(taskRepository).markTaskAsSuccessfullyPrinted(task);
     verifyNoMoreInteractions(taskRepository, taskPrinter);
@@ -54,6 +55,7 @@ public class TaskServiceTest {
 
     // THEN
     assertFalse(result);
+    verify(taskRepository).isTaskAlreadyPrinted(task);
     verify(taskPrinter).printTask(task);
     verify(taskRepository).markTaskAsFailedToPrint(task);
     verifyNoMoreInteractions(taskRepository, taskPrinter);
