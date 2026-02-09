@@ -1,35 +1,75 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import "./App.css";
 
-function App() {
-  const [count, setCount] = useState(0)
+const tasks: Task[] = [
+  {
+    id: "3b1b8cb7-4b7e-4b7e-8b7e-4b7e8b7e4b7e",
+    topic: "Complete Project Proposal",
+    dueDate: new Date("2023-12-31T23:59:59"),
+    description: "Write and submit the project proposal for the new client.",
+  },
+  {
+    id: "4b7e8b7e-4b7e-8b7e-4b7e-8b7e4b7e8b7e",
+    topic: "Review Code Changes",
+    dueDate: new Date("2023-12-20T17:00:00"),
+    description: "Review the latest code changes and provide feedback.",
+  },
+  {
+    id: "8b7e4b7e-4b7e-8b7e-4b7e-8b7e4b7e8b7e",
+    topic: "Team Meeting",
+    dueDate: new Date("2023-12-15T15:00:00"),
+    description: "Discuss the project status and next steps with the team.",
+  },
+];
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+interface Task {
+  id: string;
+  topic: string;
+  dueDate: Date;
+  description: string;
 }
 
-export default App
+function App() {
+  return (
+    <>
+      <div className="tasksContainer">
+        <h1>Tasks List</h1>
+        <TasksList tasks={tasks} />
+        <ExitButton />
+      </div>
+    </>
+  );
+}
+
+function TasksList({ tasks }: { tasks: Task[] }) {
+  return (
+    <ul className="task-list">
+      {tasks.map((task) => (
+        <TaskItem task={task} />
+      ))}
+    </ul>
+  );
+}
+
+function TaskItem({ task }: { task: Task }) {
+  return (
+    <li className="task-item">
+      <div className="task-header">
+        <span className="task-topic">{task.topic}</span>
+        <span className="task-date">{task.dueDate.toLocaleString()}</span>
+      </div>
+      <div className="task-description">{task.description}</div>
+    </li>
+  );
+}
+
+function ExitButton() {
+  return (
+    <div className="back-link">
+      <a className="homeButton" href="/">
+        Return to Home
+      </a>
+    </div>
+  );
+}
+
+export default App;

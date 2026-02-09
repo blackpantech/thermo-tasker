@@ -1,68 +1,390 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
 body {
+  font-family: 'Courier New', monospace;
+  background-color: #f0f0f0;
   margin: 0;
+  padding: 20px;
   display: flex;
-  place-items: center;
-  min-width: 320px;
+  justify-content: center;
+  align-items: center;
   min-height: 100vh;
 }
 
+.container {
+  background-color: #ffffff;
+  border: 4px solid #000000;
+  border-radius: 0;
+  padding: 30px;
+  width: 90%;
+  max-width: 600px;
+  box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+.tasksContainer {
+  background-color: #ffffff;
+  border: 4px solid #000000;
+  border-radius: 0;
+  padding: 30px;
+  width: 90%;
+  max-width: 800px;
+  box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.2);
+}
+
 h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+  color: #000000;
+  text-align: center;
+  margin-bottom: 30px;
+  font-weight: bold;
+  border-bottom: 2px solid #000000;
+  padding-bottom: 10px;
+  font-size: 2rem;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: #000000;
+  font-size: 1rem;
+}
+
+input[type="text"] {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #000000;
+  background-color: #f9f9f9;
   font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  box-sizing: border-box;
+  font-size: 1rem;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
+input[type="datetime-local"] {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: #f5f5f5;
+  border: 2px solid #333;
+  border-radius: 0;
+  color: #333;
+  font-family: inherit;
+  font-size: 1rem;
+  padding: 0.5rem;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+  outline: none;
+  transition: background-color 0.3s ease;
+}
+
+input[type="datetime-local"]:focus {
+  background-color: #e0e0e0;
+}
+
+input[type="datetime-local"]::-webkit-datetime-edit {
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+input[type="datetime-local"]::-webkit-datetime-edit-fields-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+input[type="datetime-local"]::-webkit-datetime-edit-text {
+  color: #333;
+  padding: 0 0.25rem;
+}
+
+input[type="datetime-local"]::-webkit-datetime-edit-month-field,
+input[type="datetime-local"]::-webkit-datetime-edit-day-field,
+input[type="datetime-local"]::-webkit-datetime-edit-year-field,
+input[type="datetime-local"]::-webkit-datetime-edit-hour-field,
+input[type="datetime-local"]::-webkit-datetime-edit-minute-field {
+  color: #333;
+  padding: 0 0.25rem;
+}
+
+input[type="datetime-local"]::-webkit-datetime-edit-millisecond-field {
+  display: none;
+}
+
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  background-color: #333;
+  border: none;
+  border-radius: 0;
+  color: #f5f5f5;
+  cursor: pointer;
+  height: 1.5rem;
+  margin-left: 0.5rem;
+  width: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+}
+
+input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
+  background-color: #555;
+}
+
+button[type="submit"] {
+  background-color: #000000;
+  color: #ffffff;
+  border: none;
+  padding: 15px;
+  font-family: inherit;
+  font-weight: bold;
+  cursor: pointer;
+  width: 100%;
+  border: 2px solid #000000;
+  font-size: 1.1rem;
+  margin-top: 10px;
+  transition: all 0.2s;
+}
+
+button[type="submit"]:hover {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.cancelLink {
+  color: #000000;
+  text-decoration: none;
+  font-weight: bold;
+  border-bottom: 2px solid #000000;
+  padding-bottom: 1px;
+  transition: all 0.2s;
+}
+
+.cancelLink:hover {
+  color: #ffffff;
+  background-color: #000000;
+  padding: 2px 0;
+}
+
+.homeButtons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+}
+
+.homeButton {
+  background-color: #000000;
+  color: #ffffff;
+  border: none;
+  padding: 15px 30px;
+  font-family: inherit;
+  font-weight: bold;
+  cursor: pointer;
+  border: 2px solid #000000;
+  font-size: 1.1rem;
+  text-decoration: none;
+  transition: all 0.2s;
+  width: 80%;
+  max-width: 300px;
+}
+
+.homeButton:hover {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+a.homeButton {
+  text-decoration: none;
+  color: #ffffff;
+}
+
+a.homeButton:hover {
+  color: #000000;
+}
+
+.task-list {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 30px;
+}
+
+.task-item {
+  background-color: #f9f9f9;
+  border: 2px solid #000000;
+  padding: 15px;
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.task-topic {
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-bottom: 5px;
+  border-bottom: 1px solid #000000;
+  padding-bottom: 5px;
+}
+
+.task-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+  border-bottom: 1px solid #000000;
+  padding-bottom: 5px;
+}
+
+.task-date {
+  font-size: 0.9rem;
+  color: #555555;
+  font-weight: normal;
+}
+
+.task-description {
+  font-size: 1rem;
+  color: #333333;
+}
+
+.back-link {
+  display: block;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.error {
+  color: #fa4b13;
+  font-style: italic;
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-bottom: 5px;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #1a1a1a;
+  }
+
+  .container {
+    background-color: #2d2d2d;
+    border: 4px solid #ffffff;
+    box-shadow: 8px 8px 0px rgba(255, 255, 255, 0.1);
+  }
+
+  .tasksContainer {
+    background-color: #2d2d2d;
+    border: 4px solid #ffffff;
+    box-shadow: 8px 8px 0px rgba(255, 255, 255, 0.1);
+  }
+
+  h1 {
+    color: #ffffff;
+    border-bottom: 2px solid #ffffff;
+  }
+
+  label {
+    color: #ffffff;
+  }
+
+  input[type="text"] {
+    border: 2px solid #ffffff;
+    background-color: #3a3a3a;
+    color: #ffffff;
+  }
+
+  input[type="datetime-local"] {
+    background-color: #3a3a3a;
+    border: 2px solid #cccccc;
+    color: #ffffff;
+  }
+
+  input[type="datetime-local"]:focus {
+    background-color: #4a4a4a;
+  }
+
+  input[type="datetime-local"]::-webkit-datetime-edit-text {
+    color: #ffffff;
+  }
+
+  input[type="datetime-local"]::-webkit-datetime-edit-month-field,
+  input[type="datetime-local"]::-webkit-datetime-edit-day-field,
+  input[type="datetime-local"]::-webkit-datetime-edit-year-field,
+  input[type="datetime-local"]::-webkit-datetime-edit-hour-field,
+  input[type="datetime-local"]::-webkit-datetime-edit-minute-field {
+    color: #ffffff;
+  }
+
+  input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    background-color: #cccccc;
+    color: #2d2d2d;
+  }
+
+  input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
+    background-color: #eeeeee;
+  }
+
+  button[type="submit"] {
+    background-color: #ffffff;
+    color: #000000;
+    border: 2px solid #ffffff;
+  }
+
+  button[type="submit"]:hover {
+    background-color: #000000;
+    color: #ffffff;
+  }
+
+  .cancelLink {
+    color: #ffffff;
+    border-bottom: 2px solid #ffffff;
+  }
+
+  .cancelLink:hover {
+    color: #000000;
     background-color: #ffffff;
   }
-  a:hover {
-    color: #747bff;
+
+  .homeButton {
+    background-color: #ffffff;
+    color: #000000;
+    border: 2px solid #ffffff;
   }
-  button {
-    background-color: #f9f9f9;
+
+  .homeButton:hover {
+    background-color: #000000;
+    color: #ffffff;
+  }
+
+  a.homeButton {
+    color: #000000;
+  }
+
+  a.homeButton:hover {
+    color: #ffffff;
+  }
+
+  .task-item {
+    background-color: #3a3a3a;
+    border: 2px solid #ffffff;
+  }
+
+  .task-topic {
+    color: #ffffff;
+    border-bottom: 1px solid #ffffff;
+  }
+
+  .task-header {
+    border-bottom: 1px solid #ffffff;
+  }
+
+  .task-date {
+    color: #aaaaaa;
+  }
+
+  .task-description {
+    color: #dddddd;
   }
 }
