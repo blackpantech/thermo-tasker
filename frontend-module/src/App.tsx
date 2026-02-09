@@ -41,10 +41,11 @@ function App() {
 }
 
 function TasksList({ tasks }: { tasks: Task[] }) {
+  tasks.sort((a, b) => a.dueDate.getTime() - b.dueDate.getTime());
   return (
     <ul className="task-list">
       {tasks.map((task) => (
-        <TaskItem task={task} />
+        <TaskItem key={task.id} task={task} />
       ))}
     </ul>
   );
