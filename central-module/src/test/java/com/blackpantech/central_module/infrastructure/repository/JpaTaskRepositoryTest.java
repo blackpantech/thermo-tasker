@@ -41,14 +41,15 @@ public class JpaTaskRepositoryTest {
             PrintingStatus.SUCCESS),
         new TaskEntity(UUID.randomUUID(), "Kitchen", "Wash the dishes", Instant.now(),
             PrintingStatus.FAILED));
-    when(taskJpaRepository.findAll()).thenReturn(tasks);
+    when(taskJpaRepository.findAllOrderByPrintingStatusPrintedLastAndDueDateAsc())
+        .thenReturn(tasks);
 
     // WHEN
     final List<Task> result = jpaTaskRepository.getTasks();
 
     // THEN
     assertEquals(tasks.size(), result.size());
-    verify(taskJpaRepository).findAll();
+    verify(taskJpaRepository).findAllOrderByPrintingStatusPrintedLastAndDueDateAsc();
     verifyNoMoreInteractions(taskJpaRepository);
   }
 
