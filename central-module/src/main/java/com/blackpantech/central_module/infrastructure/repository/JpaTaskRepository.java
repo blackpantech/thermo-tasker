@@ -20,7 +20,8 @@ public class JpaTaskRepository implements TaskRepository {
   @Override
   public List<Task> getTasks() {
     logger.debug("Getting all current tasks entities.");
-    final var taskEntities = taskJpaRepository.findAll();
+    final var taskEntities =
+        taskJpaRepository.findAllOrderByPrintingStatusPrintedLastAndDueDateAsc();
     logger.debug("Mapping all current tasks entities to task domain objects.");
     return taskEntities.stream().map(taskEntity -> new Task(taskEntity.getId(),
         taskEntity.getTopic(), taskEntity.getDescription(), taskEntity.getDueDate())).toList();
