@@ -1,6 +1,7 @@
 package com.blackpantech.central_module.infrastructure.repository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
@@ -48,6 +49,28 @@ public class TaskJpaRepositoryTest {
     final List<TaskEntity> tasks = taskJpaRepository
         .findAllByDueDateBeforeAndPrintingStatusNot(Instant.now(), PrintingStatus.SUCCESS);
     assertEquals(3, tasks.size());
+  }
+
+  @Test
+  void shouldGetAllTasksOrderedByPrintingStatusPrintedLastAndDueDateAsc() {
+    final List<TaskEntity> tasks =
+        taskJpaRepository.findAllOrderByPrintingStatusPrintedLastAndDueDateAsc();
+    assertEquals(9, tasks.size());
+    for (int i = 0; i < tasks.size() - 1; i++) {
+      final var currentTask = tasks.get(i);
+      final var nextTask = tasks.get(i + 1);
+      if (currentTask.getPrintingStatus() == PrintingStatus.SUCCESS) {
+        assertEquals(PrintingStatus.SUCCESS, nextTask.getPrintingStatus());
+      }
+      assertTrue((((currentTask.getPrintingStatus() == nextTask.getPrintingStatus())
+          || (currentTask.getPrintingStatus() != nextTask.getPrintingStatus()
+              && nextTask.getPrintingStatus() != PrintingStatus.SUCCESS))
+          && (currentTask.getDueDate().isBefore(nextTask.getDueDate())
+              || currentTask.getDueDate().equals(nextTask.getDueDate())))
+          || (currentTask.getPrintingStatus() != nextTask.getPrintingStatus()
+              && nextTask.getPrintingStatus() == PrintingStatus.SUCCESS));
+
+    }
   }
 
 }
