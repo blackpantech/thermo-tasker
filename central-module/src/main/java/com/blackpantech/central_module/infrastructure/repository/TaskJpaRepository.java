@@ -12,4 +12,6 @@ public interface TaskJpaRepository extends JpaRepository<TaskEntity, UUID> {
 
   @Query("SELECT t FROM TaskEntity t ORDER BY CASE WHEN t.printingStatus = 1 THEN 1 ELSE 0 END, t.dueDate ASC")
   List<TaskEntity> findAllOrderByPrintingStatusPrintedLastAndDueDateAsc();
+
+  void deleteAllByDueDateBeforeAndPrintingStatus(Instant dueDate, PrintingStatus printingStatus);
 }
