@@ -28,4 +28,4 @@ message-broker:
 
 scheduling:
   delete-old-tasks:
-    days-before-deletion: 7
+    days-before-deletion: ${DAYS_BEFORE_DELETION:7}
