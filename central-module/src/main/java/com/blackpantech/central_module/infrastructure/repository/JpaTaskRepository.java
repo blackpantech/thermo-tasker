@@ -68,4 +68,14 @@ public class JpaTaskRepository implements TaskRepository {
       taskJpaRepository.save(taskEntity);
     }
   }
+
+  @Override
+  public void deleteOldTasks(Instant dateTimeBeforeWhichTasksAreDeleted) {
+    logger.debug("Deleting all successfully printed tasks before date time {}.",
+        dateTimeBeforeWhichTasksAreDeleted);
+    taskJpaRepository.deleteAllByDueDateBeforeAndPrintingStatus(dateTimeBeforeWhichTasksAreDeleted,
+        PrintingStatus.SUCCESS);
+    logger.debug("Deleted all successfully printed tasks before date time {}.",
+        dateTimeBeforeWhichTasksAreDeleted);
+  }
 }
