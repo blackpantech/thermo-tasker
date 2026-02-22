@@ -17,6 +17,7 @@ import com.blackpantech.central_module.domain.ports.TaskRepository;
 import com.blackpantech.central_module.infrastructure.message_broker.RabbitMqTaskMessageBroker;
 import com.blackpantech.central_module.infrastructure.repository.JpaTaskRepository;
 import com.blackpantech.central_module.infrastructure.repository.TaskJpaRepository;
+import com.blackpantech.central_module.infrastructure.scheduler.DeleteOldTasksJob;
 import com.blackpantech.central_module.infrastructure.scheduler.SendDueTasksJob;
 
 @Configuration
@@ -32,6 +33,9 @@ public class CentralModuleConfiguration {
 
   @Value("${message-broker.tasks-queue.name}")
   private String tasksQueueName;
+
+  @Value("${scheduling.delete-old-tasks.days-before-deletion}")
+  private long daysBeforeDeletion;
 
   @Bean
   public TaskRepository taskRepository(final TaskJpaRepository taskJpaRepository) {
@@ -84,5 +88,10 @@ public class CentralModuleConfiguration {
   public SendDueTasksJob sendDueTasksJob(final TaskMessageBroker taskMessageBroker,
       final TaskRepository taskRepository) {
     return new SendDueTasksJob(taskMessageBroker, taskRepository);
+  }
+
+  @Bean
+  public DeleteOldTasksJob deleteOldTasksJob(final TaskRepository taskRepository) {
+    return new DeleteOldTasksJob(taskRepository, daysBeforeDeletion);
   }
 }

@@ -7,6 +7,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,7 @@ public class TaskJpaRepositoryTest {
 
 
   @Test
+  @DisplayName("Should get all due tasks that were not printed successfully")
   void shouldGetDueTasks() {
     final List<TaskEntity> tasks = taskJpaRepository
         .findAllByDueDateBeforeAndPrintingStatusNot(Instant.now(), PrintingStatus.SUCCESS);
@@ -52,6 +54,7 @@ public class TaskJpaRepositoryTest {
   }
 
   @Test
+  @DisplayName("Should get all tasks ordered by printing status (printed last) and due date (asc)")
   void shouldGetAllTasksOrderedByPrintingStatusPrintedLastAndDueDateAsc() {
     final List<TaskEntity> tasks =
         taskJpaRepository.findAllOrderByPrintingStatusPrintedLastAndDueDateAsc();
@@ -69,8 +72,20 @@ public class TaskJpaRepositoryTest {
               || currentTask.getDueDate().equals(nextTask.getDueDate())))
           || (currentTask.getPrintingStatus() != nextTask.getPrintingStatus()
               && nextTask.getPrintingStatus() == PrintingStatus.SUCCESS));
-
     }
   }
 
+  @Test
+  @DisplayName("Should delete tasks with due date older than 7 days")
+  void shouldDeleteOldTasks() {
+    var task = new TaskEntity(UUID.randomUUID(), "Math", "Resolve exercise 9.",
+        Instant.now().minus(Duration.ofDays(9)), PrintingStatus.SUCCESS);
+    taskJpaRepository.save(task);
+    final var initialTasks = taskJpaRepository.findAll();
+    assertEquals(10, initialTasks.size());
+    taskJpaRepository.deleteAllByDueDateBeforeAndPrintingStatus(
+        Instant.now().minus(Duration.ofDays(7)), PrintingStatus.SUCCESS);
+    final var updatedTasks = taskJpaRepository.findAll();
+    assertEquals(9, updatedTasks.size());
+  }
 }
