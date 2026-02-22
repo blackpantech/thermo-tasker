@@ -13,9 +13,9 @@ import com.blackpantech.central_module.infrastructure.repository.PrintingStatus;
 public class SendDueTasksJob {
   private final Logger logger = LoggerFactory.getLogger(SendDueTasksJob.class);
 
-  private TaskMessageBroker taskMessageBroker;
+  private final TaskMessageBroker taskMessageBroker;
 
-  private TaskRepository taskRepository;
+  private final TaskRepository taskRepository;
 
   public SendDueTasksJob(final TaskMessageBroker taskMessageBroker,
       final TaskRepository taskRepository) {
