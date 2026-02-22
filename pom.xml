@@ -5,7 +5,7 @@
 
     <groupId>com.blackpantech</groupId>
     <artifactId>thermo-tasker</artifactId>
-    <version>0.3.1</version>
+    <version>0.3.2</version>
     <packaging>pom</packaging>
     <description>A (very hot) thermal printer tasker.</description>
 
