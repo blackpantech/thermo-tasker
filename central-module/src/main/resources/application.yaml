@@ -25,3 +25,7 @@ message-broker:
       routing-key: ${DEAD_LETTER_ROUTING_KEY:dlq.routingKey}
   tasks-queue:
     name: ${TASKS_QUEUE_NAME:tasks.queue}
+
+scheduling:
+  delete-old-tasks:
+    days-before-deletion: 7
